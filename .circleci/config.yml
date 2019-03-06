@@ -29,8 +29,6 @@ jobs:
       - run: yarn build
       - run: touch dist/CNAME
       - run: echo "sunburst.wang" >> dist/CNAME
-      - run: git add dist/
-      - run: git commit -m "deploy"
       - deploy:
           command: |
             git push origin `git subtree split --prefix dist master`:master --force

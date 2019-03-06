@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "name": "W-Qing.github.io",
+  "description": "W-Qing's homepage",
+  "author": "W-Qing <scorpio971028@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vuepress dev src --temp ./.temp",
+    "build": "vuepress build src -d ./dist --temp ./.temp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ https://github.com/W-Qing/W-Qing.github.io.git"
+  },
+  "dependencies": {
+    "@vuepress/plugin-google-analytics": "1.0.0-alpha.41",
+    "vuepress": "1.0.0-alpha.41",
+    "vuepress-theme-meteorlxy": "1.0.0-alpha.23"
+  }
+}

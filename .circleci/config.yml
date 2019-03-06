@@ -32,4 +32,3 @@ jobs:
       - deploy:
           command: |
             git push origin `git subtree split --prefix dist master`:master --force
-            rm -rf dist

@@ -27,12 +27,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: yarn build
-      - run: touch dist/CNAME
       - run: echo "sunburst.wang" >> dist/CNAME
       - deploy:
           command: |
-<<<<<<< HEAD
             git push origin `git subtree split --prefix dist master`:master --force
-=======
-            git push origin `git subtree split --prefix dist master`:master --force
->>>>>>> 35fdd1358226b254cd3581e62161059b50fb7c64

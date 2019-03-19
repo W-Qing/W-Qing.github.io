@@ -83,18 +83,23 @@ module.exports = {
       config.optimization.splitChunks({
         maxInitialRequests: 5,
         cacheGroups: {
-          vue: {
-            test: /[\\/]node_modules[\\/](vue|vue-router)[\\/]/,
-            name: 'vendor.vue',
-            chunks: 'all'
+          2: {
+            test: /[\\/]node_modules[\\/](@vssue|@vuepress|vssue|nprogress|geopattern)[\\/]/,
+            name: 'vendor.2',
+            chunks: 'all',
           },
-          commons: {
+          1: {
+            test: /[\\/]node_modules[\\/](vue|vue-router|vue-i18n|vue-class-component)[\\/]/,
+            name: 'vendor.1',
+            chunks: 'all',
+          },
+          0: {
             test: /[\\/]node_modules[\\/]/,
             priority: -10,
-            name: 'vendor.commons',
-            chunks: 'all'
-          }
-        }
+            name: 'vendor.0',
+            chunks: 'all',
+          },
+        },
       })
     }
   }

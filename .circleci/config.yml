@@ -1,16 +1,21 @@
 version: 2
 jobs:
   build:
+    branches:
+      ignore:
+        - master
     docker:
       # specify the version you desire here
       - image: circleci/node:latest
 
-    working_directory: ~/
-
+    working_directory: ~/repo
+    environment:
+      - SOURCE_BRANCH: src
+      - TARGET_BRANCH: master
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "a1:78:37:18:a1:86:39:b5:f0:e5:e7:39:87:1d:05:c9"
+            - "7b:e8:26:a8:a0:2c:27:4a:b2:d3:eb:d2:4b:c1:66:ee"
       - checkout
 
       - restore_cache:
@@ -19,17 +24,38 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: yarn install
+      - run:
+        name: Install dependencies 
+        command: yarn install
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: yarn build
-      - run: cd dist
-      - run: echo "sunburst.wang" >> CNAME
-      - run: cd ..
       - deploy:
+          name: Deploy
           command: |
-            git push origin `git subtree split --prefix dist master`:master --force
+            if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
+              git config --global user.email $GH_EMAIL
+              git config --global user.name $GH_NAME
+
+              git clone $CIRCLE_REPOSITORY_URL out
+
+              cd out
+              git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
+              git rm -rf .
+              cd ..
+
+              npm run build
+
+              cp -a build/. out/.
+
+              mkdir -p out/.circleci && cp -a .circleci/. out/.circleci/.
+              cd out
+
+              git add -A
+              git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+
+              git push origin $TARGET_BRANCH
+            fi

@@ -48,7 +48,7 @@ jobs:
               cd ..
 
               npm run build
-
+              echo "sunburst.wang" > dist/REDAME.md
               cp -a dist/. out/.
 
               mkdir -p out/.circleci && cp -a .circleci/. out/.circleci/.

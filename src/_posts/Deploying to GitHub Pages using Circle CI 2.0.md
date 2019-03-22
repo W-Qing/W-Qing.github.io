@@ -1,5 +1,5 @@
 ---
-category: Translation
+category: Notes
 
 tags: 
   - Circle CI
@@ -126,3 +126,15 @@ jobs:
             fi
 ```
 
+Happy building! 🍻
+
+BTW，为了方便，这份配置文件有意遗漏了两个可能的附加内容：🤪
+
+1. 将部署脚本放入单独的deploy.sh脚本中
+2. 使用Circle CI工作流可以更清晰地在主分支上运行脚本。
+
+## 参考
+
+- <https://blog.frederikring.com/articles/deploying-github-pages-circle-ci/>
+- <https://circleci.com/docs/2.0/language-javascript/>
+- <https://circleci.com/docs/2.0/gh-bb-integration/#creating-a-github-user-key>

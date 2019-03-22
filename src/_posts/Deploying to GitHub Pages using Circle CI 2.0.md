@@ -34,7 +34,95 @@ vssue-title: '利用Circle CI2.0自动化部署Github Pages'
 
 在项目根目录或.circleci目录中为CircleCI创建名为config.yml的配置文件。
 
-## 授予Circle CI访问仓库权限
+## 授权Circle CI访问仓库
 
-这当然意味着Circle CI需要能够推送到您的项目仓库。 Circle CI已自动执行此过程，并允许您使用可访问存储库的任何帐户自动创建用户密钥。此密钥保持半秘密 - 只有指纹才会在UI中可见。它可用于您的部署脚本，因此请确保在部署时不运行不受信任或未知的代码。
+当你在点击Setup projects后，CircleCi 将会为你的项目在基于网络的分布式系统上（例如GitHub和Bitbucket）创建部署密钥。部署密钥是仓库专属的密钥。如果你使用GitHub作为你的分布式系统，而且GitHub拥有公钥，CircleCi 将会储存私有秘钥。部署密钥给予CircleCi 访问单个仓库的权限。为了保护CircleCi不能推送内容到你的仓库，部署密钥是只读的。
+
+但是既然要使Circle CI实现自动部署，肯定需要在构建后push内容到项目的仓库。那么就要创建一个有读写权限的密钥，即用户密钥。 [创建用户密钥](<https://circleci.com/docs/2.0/gh-bb-integration/#creating-a-github-user-key>)
+
+然后将用户密钥的`fingerprints`添加到配置文件 config.yml中
+
+```bash
+version: 2
+jobs:
+  deploy-job:
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SO:ME:FIN:G:ER:PR:IN:T"
+```
+
+除此之外，部署脚本还需要了解你的用户密钥关联的用户名和电子邮件。这些信息可以定义在config.yml中，但最好存储在Circle Ci 的项目环境变量中。这样你可以在部署脚本中使用以下内容：
+
+```bash
+git config --global user.email $GH_EMAIL
+git config --global user.name $GH_NAME
+```
+
+## 编辑部署脚本
+
+```bash
+version: 2
+jobs:
+  build:
+    branches:
+      ignore:
+        - master
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:latest
+
+    working_directory: ~/repo
+    environment:
+      - SOURCE_BRANCH: src
+      - TARGET_BRANCH: master
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "xx:xx:xx:xx:xx"
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: Install dependencies 
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - deploy:
+          name: Deploy
+          command: |
+            if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
+              git config --global user.email $GH_EMAIL
+              git config --global user.name $GH_NAME
+
+              git clone $CIRCLE_REPOSITORY_URL out
+
+              cd out
+              git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
+              git rm -rf .
+              cd ..
+
+              npm run build
+              # write my custom domain name into the CNAME file
+              echo "sunburst.wang" > dist/CNAME
+              cp -a dist/. out/.
+
+              mkdir -p out/.circleci && cp -a .circleci/. out/.circleci/.
+              cd out
+
+              git add -A
+              git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+
+              git push origin $TARGET_BRANCH
+            fi
+```
 

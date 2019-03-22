@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@vuepress/plugin-google-analytics": "1.0.0-alpha.44",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
     "vuepress": "1.0.0-alpha.44",
     "vuepress-theme-meteorlxy": "1.0.0-alpha.28"
   }

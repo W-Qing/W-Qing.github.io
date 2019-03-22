@@ -45,8 +45,8 @@ module.exports = {
     ],
 
     headerBackground: {
-      // url: '/assets/img/bg.jpg',
-      useGeo: true,
+      url: '/aboutImg/header-image-01.jpg',
+      //useGeo: false,
     },
 
     nav: [

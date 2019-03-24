@@ -54,15 +54,13 @@ module.exports = {
       { text: 'Posts', link: '/posts/', exact: false  },
       { text: 'About', link: '/about/', exact: false  }
     ],
-
     comments: {
       platform: 'github',
       owner: 'W-Qing',
       repo: 'W-Qing.github.io',
       clientId: 'c15792009a34a7feb3eb',
       clientSecret: '9b782f67039b4cb41deedb85907852ec9e6a8a2b',
-      prefix: '[Post Comments] ',
-      labels: ['comments'],
+      autoCreateIssue: process.env.NODE_ENV !== 'development',
     },
   },
 

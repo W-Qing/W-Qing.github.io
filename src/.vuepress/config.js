@@ -29,7 +29,7 @@ module.exports = {
       organization: 'Ludong University',
 
       avatar: '/img/avatar.png',
-
+      background: '/background/header.png',
       sns: {
         github: {
           account: 'W-Qing',
@@ -37,21 +37,18 @@ module.exports = {
         }
       },
     },
-    // 喜欢的语录
-    quotations: [
-      '人有所执，方有所成',
-      '不如意才是人生',
-      '成熟不是世故'
-    ],
-
-    headerBackground: {
-      url: '/aboutImg/header-image-01.jpg',
-      //useGeo: false,
+    header: {
+      showTitle: true,
+      background: {
+        url: '/background/header.png'
+        //useGeo: false,
+      }
     },
 
     nav: [
       { text: 'Home', link: '/', exact: true },
       { text: 'Posts', link: '/posts/', exact: false  },
+      { text: 'Life', link: '/life', exact: false },
       { text: 'About', link: '/about/', exact: false  }
     ],
     comments: {

@@ -5,8 +5,8 @@
   "author": "W-Qing <scorpio971028@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "vuepress dev src --temp ./.temp",
-    "build": "vuepress build src -d ./dist --temp ./.temp"
+    "dev": "vuepress dev src",
+    "build": "vuepress build src --dest dist"
   },
   "repository": {
     "type": "git",

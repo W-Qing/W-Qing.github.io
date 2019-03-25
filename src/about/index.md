@@ -3,8 +3,7 @@ layout: AboutLayout
 title: '🎉你好哇 ✨'
 aside: false
 header-image:
-  - /public/aboutImg/header-image-01.jpg
-  - /public/aboutImg/header-image-02.jpg
+  - /background/about.png
 header-title: true
 ---
 ## 关于我

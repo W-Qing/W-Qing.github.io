@@ -17,7 +17,7 @@ export default {
   name: "LifeLayout",
   data(){
     return {
-      slogan: 'movies'
+      slogan: ''
     }
   },
   mounted(){

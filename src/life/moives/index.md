@@ -9,3 +9,4 @@ slogan: '电影下的子标题'
 ---
 
 这里是电影组件(todo)
+<MovieCard/>

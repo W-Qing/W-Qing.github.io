@@ -20,6 +20,11 @@ export default {
     return {
       movies: [
         {
+          title: '海王',
+          info: 'saggdsfgdsfgsfgdg',
+          imgurl: 'https://img1.doubanio.com/view/photo/l/public/p2541280047.webp'
+        },
+        {
           title: '流浪地球',
           info: 'balabalabala',
           imgurl: 'https://img3.doubanio.com/view/photo/l/public/p2546876262.webp'
@@ -38,7 +43,7 @@ export default {
           title: '惊奇队长',
           info: 'balabalabala',
           imgurl: 'https://img3.doubanio.com/view/photo/l/public/p2547205462.webp'
-        },
+        }
       ]
     }
   },

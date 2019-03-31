@@ -20,6 +20,11 @@ export default {
     return {
       movies: [
         {
+          title: '毒液',
+          info: 'sadgsdgsfg',
+          imgurl: 'http://img.cdn.fonts.net.cn/0-article-files/article-content-be37e9c64107856deb14a5965c3a1fdd.jpg'
+        },
+        {
           title: '海王',
           info: 'saggdsfgdsfgsfgdg',
           imgurl: 'https://img1.doubanio.com/view/photo/l/public/p2541280047.webp'

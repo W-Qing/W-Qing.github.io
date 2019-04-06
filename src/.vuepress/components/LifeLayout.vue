@@ -17,7 +17,7 @@ export default {
   name: "LifeLayout",
   data(){
     return {
-      slogan: ''
+      slogan: "Blog to live, don't live to blog."
     }
   },
   mounted(){

@@ -48,7 +48,12 @@ export default {
           title: '惊奇队长',
           info: 'balabalabala',
           imgurl: 'https://img3.doubanio.com/view/photo/l/public/p2547205462.webp'
-        }
+        },
+        {
+          title: '美国队长',
+          info: 'sadgsdgsfg',
+          imgurl: 'http://img.cdn.fonts.net.cn/0-article-files/article-content-be37e9c64107856deb14a5965c3a1fdd.jpg'
+        },
       ]
     }
   },

@@ -29,7 +29,7 @@ module.exports = {
       organization: 'Ludong University',
 
       avatar: '/img/avatar.png',
-      background: '/background/header.png',
+      background: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg',
       sns: {
         github: {
           account: 'W-Qing',
@@ -41,6 +41,8 @@ module.exports = {
       showTitle: true,
       background: {
         url: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg'
+        // '/background/header.png'
+        // 其他页面是 header-image: 换行 - /background/header.png
         //useGeo: false,
       }
     },

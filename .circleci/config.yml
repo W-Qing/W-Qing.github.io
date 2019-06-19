@@ -26,8 +26,7 @@ jobs:
 
       - run:
           name: Install dependencies 
-          command: |
-            yarn config set sass-binary-site https://npm.taobao.org/mirrors/node-sass
+          command: 
             yarn install
 
       - save_cache:

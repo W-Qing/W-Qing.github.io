@@ -40,7 +40,7 @@ module.exports = {
     header: {
       showTitle: true,
       background: {
-        url: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg?imageMogr2/auto-orient/thumbnail/400x2000%3E/quality/70/interlace/1'
+        url: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg'
         //useGeo: false,
       }
     },

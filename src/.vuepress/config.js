@@ -74,7 +74,10 @@ module.exports = {
       'ga': 'UA-136843234-1',
     }],
   ], 
-
+   // 分页配置
+  pagination: {
+    perPage: 8,
+  },
   chainWebpack: (config, isServer) => {
     if (isServer === false) {
       config.optimization.splitChunks({

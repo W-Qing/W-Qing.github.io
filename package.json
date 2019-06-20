@@ -13,10 +13,13 @@
     "url": "git+ https://github.com/W-Qing/W-Qing.github.io.git"
   },
   "dependencies": {
-    "@vuepress/plugin-google-analytics": "1.0.0-alpha.44",
-    "node-sass": "^4.11.0",
+    "@vuepress/plugin-google-analytics": "^1.0.0",
+    "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
-    "vuepress": "1.0.0-alpha.44",
-    "vuepress-theme-meteorlxy": "1.0.0-alpha.29"
+    "vuepress": "^1.0.0",
+    "vuepress-theme-meteorlxy": "^1.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }

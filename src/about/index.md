@@ -2,7 +2,7 @@
 layout: AboutLayout
 title: '🎉你好哇 ✨'
 aside: false
-header-image: 'https://cdn.ruguoapp.com/FiaKQIzujBWPoodl3r4DjfRXIQr_.jpeg'
+header-image: 'https://raw.githubusercontent.com/W-Qing/ImageHosting/src/Blog/blogaboutme.jpg'
 header-title: true
 ---
 ## 关于我

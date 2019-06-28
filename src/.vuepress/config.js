@@ -29,7 +29,8 @@ module.exports = {
       organization: 'Ludong University',
 
       avatar: '/img/avatar.png',
-      background: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg',
+      // InfoCard的背景图
+      background: 'https://raw.githubusercontent.com/W-Qing/ImageHosting/src/Blog/blogmovie.jpg',
       sns: {
         github: {
           account: 'W-Qing',
@@ -40,13 +41,17 @@ module.exports = {
     header: {
       showTitle: true,
       background: {
-        url: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg'
+        url: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg',
         // '/background/header.png'
         // 其他页面是 header-image: 换行 - /background/header.png
         //useGeo: false,
+
+        // 是否在 header 显示标题
+        showTitle: true,
       }
     },
-
+    // 是否显示文章的最近更新时间
+    lastUpdated: true,
     nav: [
       { text: 'Home', link: '/', exact: true },
       { text: 'Posts', link: '/posts/', exact: false  },
@@ -62,7 +67,6 @@ module.exports = {
       autoCreateIssue: process.env.NODE_ENV !== 'development',
     },
   },
-
   markdown: {
     toc: {
       includeLevel: [2, 3, 4]
@@ -76,7 +80,7 @@ module.exports = {
   ], 
    // 分页配置
   pagination: {
-    perPage: 8,
+    perPage: 5,
   },
   chainWebpack: (config, isServer) => {
     if (isServer === false) {

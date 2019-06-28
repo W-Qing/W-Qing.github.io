@@ -9,8 +9,6 @@ title: 'HTML基础学习笔记'
 description: 'HTML（HyperText Markup Language） 是一种用标签来描述网页内容和结构的超文本标记语言 。'
 
 date: 2018-01-01
-
-vssue-title: 'HTML基础学习笔记'
 ---
 
 <!-- more -->

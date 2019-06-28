@@ -2,7 +2,7 @@
 layout: LifeLayout
 title: '这里是电影的title'
 aside: false
-header-image: 'https://cdn.ruguoapp.com/Fl09r90ExkFI8fi-N8yC9C1OQtaN.jpeg'
+header-image: 'https://raw.githubusercontent.com/W-Qing/ImageHosting/src/Blog/blogmovie.jpg'
 header-title: true
 slogan: '电影下的子标题'
 ---

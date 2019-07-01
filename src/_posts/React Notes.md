@@ -377,13 +377,27 @@ function ActionLink () {
 
 当我们使用 ES6 class 类定义组件时，通常的做法是将事件处理函数声明为 class 中的方法。
 
-⚠️但这样一来，我们需要特别注意 JSX 回调函数中的 `this`。因为在 class 组件里，**除了构造函数和生命周期钩子函数里会自动绑定 this 为当前组件外，其他的都不会自动绑定 this 的指向为当前组件**。如果你忘记将 this 绑定到 `this.handleClick` 并把它传入了 `onClick`，那么当你调用这个函数的时候 `this` 的值为 `undefined`。(这和 ES6 里 Class 的 this 指向以及 JS 函数工作原理有关，并不是 React 独有的问题）
+⚠️但这样一来，我们需要特别注意 JSX 回调函数中的 `this`。
+
+因为在 class 组件里，**除了构造函数和生命周期钩子函数里会自动绑定 this 为当前组件外，其他的都不会自动绑定 this 的指向为当前组件**。
+
+如果你在 JSX 里忘记将 this 绑定到 `this.handleClick` 并把它传入了 `onClick`，那么当你调用这个函数的时候 `this` 的值为 `undefined`。(这和 ES6 里 Class 的 this 指向以及 JS 函数工作原理有关，并不是 React 独有的问题）
 
 ```jsx
  <button onClick={this.handleClick.bind(this)}>Click me</button>
 ```
 
- 如果觉得上面这样使用 `bind` 很麻烦，我们可以**在组件的 constructor 里统一为回调方法绑定 this 指向**，如：
+ 如果觉得上面这样每次都要写`.bind(this)`很麻烦，可以使用 ES6 箭头函数来进行隐式绑定 this：
+
+```jsx
+<button onClick={(e) => this.handleClick(e)}>Click me </button>
+```
+
+但其实这两种方法都有一个潜在的性能问题(实际上由此引发的性能问题往往不值一提)：👻
+
+**当组件每次重新执行`render`渲染时，都会有一个新的函数创建。如果该回调函数作为 prop 传入子组件时，这些组件可能会进行额外的重新渲染。**
+
+😝而我们有更好的方法就是可以**在组件的 constructor 里统一为回调方法绑定 this 指向**，如：
 
 ```jsx
 class Toggle extends React.Component {
@@ -411,11 +425,15 @@ class Toggle extends React.Component {
 }
 ```
 
-此外，我们还有另外一种方法来使用**箭头函数**绑定指向，就是使用`实验性`的属性初始化语法，如：
+但就实际编程体验而言，这种方式不如上面两种写法简明扼要，往往要写很多重复代码。在可读性和可维护性上也有些欠缺。同时，在 constructor 内声明的方法不会存在实例的原型上，而属于实例本身。如此一来，每个实例都有一个同样的 handleClick，这也是一种重复和浪费。
+
+此外，如果你拥抱 ES next 且能够使用 stage-2 的新特性(实验性的🤖)，那么你还可以**在定义阶段使用箭头函数绑定**来正确的绑定 this，如：
 
 ```jsx
 class Counter extends React.Component {
-    handleClick: () => {
+    // 此语法确保 `handleClick` 内的 `this` 已被绑定。
+    handleClick = () => {
+      console.log('this is:', this);
     	this.setState(state => ({
        isToggleOn: !state.isToggleOn
     }));
@@ -423,20 +441,110 @@ class Counter extends React.Component {
 }
 ```
 
+使用这种方式的优点：
+
+- 使用箭头函数，有效绑定了 this
+- 没有在 JSX 内绑定的潜在性能问题
+- 避免了 constrcutor 内绑定的组件实例重复问题
+
 ### 3. 向事件函数传递参数
 
-像事件处理程序传递参数 我们可以为事件处理程序传递额外的参数，方式有以下两种：
+通常我们会为事件处理函数传递额外的参数，方式有以下两种：
 
 ```jsx
+//使用箭头函数(不推荐)
 <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+//bind绑定
 <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
 ```
 
-需要注意的是，使用箭头函数的情况下，参数`e`要显式传递，而使用bind的情况下，则无需显式传递（参数`e`会作为最后一个参数传递给事件处理程序）
+- 关于事件参对象 event，在使用箭头函数的情况下，参数`e`要显式传递，而使用 bind 的情况下，事件对象以及更多的参数将会被隐式的进行传递。
+- 由上面的 this 指向问题可知，更好的方式是在 constructor 内绑定 this 后，在事件函数调用时直接传递参数`onClick={this.deleteRow.bind(id)}`
 
 ## 6. 条件渲染
 
+> 在 React 中，你可以创建不同的组件来封装各种你需要的行为。然后，依据应用的不同状态，你可以只渲染对应状态下的部分内容。
+
+```jsx
+//代码并不优雅，仅做demo
+function UserLogin(props) {
+    const isLogined = props.isLogined;
+ 		const isVip = props.isVip;
+  	const isQbVip = props.isQbVip; //穷b vip
+  	var welcome
+  	if (isLogined) {	
+      //存储 react 元素
+      welcome = <span>欢迎,尊敬的vip用户{isQbVip && <a>请尽快升级为正式Vip!</a>}</span>
+        return <button>{isVip ? welcome: ''}退出</button>
+    } else {
+        return <button>登陆</button>
+    }
+}
+```
+
+- 使用变量存储 React 元素，帮助我们有条件地渲染组件的一部分，而其他的渲染部分并不会因此而改变。
+- 可以使用 if 语句进行条件渲染或者在 JSX 内使用更简洁的条件运算符
+- 如果条件是 `true`，`&&` 右侧的元素就会被渲染，如果是 `false`，React 会忽略并跳过它。
+- 在较复杂的表达式中使用三元运算符会使代码结构不太直观，此时应该考虑提取组件。
+
+> 在极少数情况下，你可能希望能隐藏组件，即使它已经被其他组件渲染。若要完成此操作，你可以让 `render` 方法直接返回 `null`，而不进行任何渲染。
+>
+> **注意：** 在组件的`render`方法中返回`null`并不会影响组件生命周期函数的触发，如`componentWillUpdate`和`componentDidUpdate`等仍然会被调用。
+
 ## 7. 列表 & Key
+
+### 1. 列表渲染
+
+在 React 里，我们是使用`map()`方法来将数组项进行列表渲染的：
+
+```jsx
+function TodoList (props) {
+    const todos = props.todos;
+    const TodoItems = todos.map(item => {
+        return (
+            <li>{item}</li>
+        )
+    });
+    return <ul>{TodoItems}</ul>
+}
+```
+
+当我们运行以上的代码的时候，会发现控制台提示：`Each child in an array or iterator should have a unique "key" prop`，意思是当你创建一个元素时，必须包括一个特殊的 `key` 属性。
+
+### 2.  Key 属性的作用
+
+弄清楚`key`属性的作用之前，先了解一下 React 中 JSX 的运行基础 Virtual Dom ：
+
+> 在 React 组件内部，它维护了一套虚拟 Dom 的状态。这套虚拟状态树最终会映射到真实的 DOM 节点上。当虚拟 DOM 的状态发生变化的时候， 它需要去计算前后两个虚拟 DOM 之间的区别，并产生一个 Diff。最终在真实的 DOM 节点上并不是整体刷新所有 DOM，而是把 Diff 的部分通过高效地方式更新到 UI 上，从而能够保证性能。
+
+以及它的 `Diff算法`（复杂度O(n) ）的工作原理：
+
+1. 当前后两个虚拟节点的 DOM 树发生变化之后，React 的 Diff 算法会从它们的根节点开始  一层层地比较，即**广度优先的分层比较**。
+2. 如果同一层里的节点顺序发生变化，算法会要求节点都必须有唯一的标识，然后才能交换节点的位置。
+3. 如果是节点的类型发生变化，则 React 会简单粗暴的将旧类型的节点删掉（不会检查是否在该DOM 树的其他位置也有一样的节点），然后创建一个新类型的节点。
+4. DOM 节点的跨层移动，这种情况下 diff 算法只会将发生位置变化的节点及其子元素整个一起删除掉，后续在新位置上重新创建这个节点及其子元素 (也就是不会进行”剪切“和”粘贴“操作)。
+
+React 之所以不对发生移动的节点进行”剪切和粘贴“，而直接放弃检查是因为这个算法的实现基于两个假设：
+
+- 组件的 DOM 结构是相对稳定的。(很少发生节点跨层移动)
+- 类型相同的兄弟节点可以被唯一标识。（主要用在同一层的节点顺序与位置发生变化的场景 ）
+
+🔑正因为 Diff 算法的要求，所以**相同类型的子元素需要一个 key 去唯一的标识它**。如果没有这个 key，React 不但会报一个 Warning，其内部工作时可能就不会去做 DOM 节点交换这样的操作，而是做一些重新创建节点等性能开销更大的操作。所以 **key 并不只是用来消除 warning，而是一个用来提升性能的属性**。
+
+### 3. 设置 key 的值
+
+我们在设置 key 时要注意以下几点：
+
+- 一个元素的 key 最好是这个元素在列表中拥有的一个独一无二的字符串。通常，我们使用来自数据的 id 来作为元素的 key。
+- 当元素没有确定 id 的时候，万不得已你可以使用元素索引 index 作为 key。(如果不为数组元素显式的指定 key 值，那么 React 将默认使用索引用作为列表项目的 key 值。)
+- 如果列表项目的顺序可能会变化，则更不建议使用索引来用作 key 值，因为这样做会导致性能变差，还可能引起组件状态的问题。
+- 元素的 key 只有放在就近的数组上下文中才有意义。一个好的经验法则是：在 `map()` 方法中的元素需要设置 key 属性。
+- key 不需要全局唯一，只需要在一个数组内，兄弟节点之间区分彼此时唯一便可。当我们生成两个不同的数组时，我们可以使用相同的 key 值。
+- key 会传递信息给 React 在进行 Diff 计算的时候使用，但不会传递给你的组件。如果你的组件中需要使用 `key` 属性的值，可以使用其他属性名显式传递这个值。
+
+[深度解析使用索引作为 key 的负面影响](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318) 👈
+
+[深入解析为什么 key 是必须的](https://zh-hans.reactjs.org/docs/reconciliation.html#recursing-on-children)👈
 
 ## 8. 表单
 

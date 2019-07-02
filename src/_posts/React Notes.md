@@ -264,13 +264,15 @@ ReactDOM.render(
 );
 ```
 
-想正确地使用sate，就要牢记下面三点：
+想正确地使用 state，就要牢记下面三点：
 
 ⚠️**1. 不要直接修改State** 
 
 构造函数(constructor)是唯一可以给 `this.state` 赋值的地方。
 
-所以在其他函数(tick方法👆)里不能直接使用`this.state.xxx = xxx`的方式来改变一个`state`的值，而应该使用`this.setState()`。
+所以在其他函数(tick方法👆)里不能直接使用`this.state.xxx = xxx`的方式来改变一个`state`的值，而应该使用`this.setState()`方法。
+
+关于这个方法的详细信息：[setState()  API](https://zh-hans.reactjs.org/docs/react-component.html#setstate) 👈
 
 ⚠️**2. State 的更新可能是异步的**
 
@@ -317,13 +319,13 @@ this.setState((state, props) => ({
 
 ### 3. 组件生命周期
 
-在前面的 `Clock` 组件中，我们在`componentDidMount`中设置了定时器，该方法会在组件 UI 已经被渲染到 DOM 中(挂载 mount )后调用。它只会执行一次，典型的应用场景就是在这个方法里进行数据请求，获取外部资源。
+在前面的 `Clock` 组件中，我们在`componentDidMount()`中设置了定时器，该方法会在组件 UI 已经被渲染到 DOM 中(挂载 mount )后调用。它只会执行一次，典型的应用场景就是在这个方法里进行数据请求，获取外部资源。
 
-同样，我们在`componentWillUnmount`中清除了定时器。一旦组件从 DOM 中被移除(卸载 unmount )，React 就会调用这个生命周期方法。典型的应用场景就是释放资源。
+同样，我们在`componentWillUnmount()`中清除了定时器。一旦组件从 DOM 中被移除(卸载 unmount )，React 就会调用这个生命周期方法。典型的应用场景就是释放资源。
 
-React 的`componentDidUpdate`也是一个常用的生命周期方法。
+React 的`componentDidUpdate()`也是一个常用的生命周期方法。
 
-此外，`render`方法也是React生命周期方法，这也是组件唯一必须定义的生命周期方法。
+此外，`render()`方法也是React生命周期方法，这也是组件唯一必须定义的生命周期方法。
 
 关于组件生命周期这部分的详细信息看下面的链接：
 
@@ -395,7 +397,7 @@ function ActionLink () {
 
 但其实这两种方法都有一个潜在的性能问题(实际上由此引发的性能问题往往不值一提)：👻
 
-**当组件每次重新执行`render`渲染时，都会有一个新的函数创建。如果该回调函数作为 prop 传入子组件时，这些组件可能会进行额外的重新渲染。**
+**当组件每次重新执行`render()`渲染时，都会有一个新的函数创建。如果该回调函数作为 `prop` 传入子组件时，这些组件可能会进行额外的重新渲染。**
 
 😝而我们有更好的方法就是可以**在组件的 constructor 里统一为回调方法绑定 this 指向**，如：
 
@@ -544,15 +546,164 @@ React 之所以不对发生移动的节点进行”剪切和粘贴“，而直�
 
 [深度解析使用索引作为 key 的负面影响](https://medium.com/@robinpokorny/index-as-a-key-is-an-anti-pattern-e0349aece318) 👈
 
-[深入解析为什么 key 是必须的](https://zh-hans.reactjs.org/docs/reconciliation.html#recursing-on-children)👈
+[深入解析为什么 key 是必须的](https://zh-hans.reactjs.org/docs/reconciliation.html#recursing-on-children) 👈
 
 ## 8. 表单
 
 ### 1. 受控组件
 
+> 在 HTML 中，表单元素（如`<input>`、 `<textarea>` 和 `<select>`）之类的表单元素通常会自己保存维护一些内部 state，并根据用户输入进行更新。
+>
+> 而在 React 中，可变状态（mutable state）通常保存在组件的 state 属性中，并且只能通过使用 `setState()`来更新。
+>
+> 我们可以把两者结合起来，使 React 的 state 成为“唯一数据源”。渲染表单的 React 组件还控制着用户输入过程中表单发生的操作。被 React 以这种方式控制取值的表单输入元素就叫做“受控组件”。
+
+```jsx
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: ''
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+  handleSubmit(event) {
+    alert('提交的名字: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          名字:
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="提交" />
+      </form>
+    );
+  }
+}
+```
+
+- 通过在组件输入元素上使用`value={this.state.value}`，使 React 的`state`成为唯一数据源。
+- 对于受控组件来说，每个 state 突变都有一个相关的处理函数。(`onChange`、`onSubmit`)
+
+另外，React 中的`textarea`标签和`select`标签与 HTML 中的用法还有些不同：
+
+1. 用 `<textarea>` 的表单和使用单行 input 的表单非常类似
+
+```jsx
+// html
+<textarea>
+  你好，这是 textarea 里的文本
+</textarea>
+// react
+<textarea value={this.state.value} onChange={this.handleChange} />
+```
+
+2. React 并不会在`option`标签上使用 `selected` 属性，而是在根 `select` 标签上使用 `value` 属性，就可以选中相应的选项。
+
+```jsx
+handleSelectedChange(event) {
+    this.setState({selectval: event.target.value});
+}
+// ...
+<select value={this.state.selectval} onChange={this.handleSelectedChange}>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+</select>
+
+//注意: 你可以将数组传递到 value 属性中，以支持在 select 标签中选择多个选项
+<select multiple={true} value={['B', 'C']}>
+```
+
 ### 2. 处理多个输入
 
+通常一个表单都是需要处理多个 `input` 元素的，如果我们为每一个输入都添加处理事件， 那么将会非常繁琐。不过在 React 里我们可以通过给每个元素添加 `name` 属性，然后根据`event.target.name`来选择执行相应的操作。📝
+
+```jsx
+class Form extends React.Component {
+    constructor (props) {
+        super(props);
+        this.state = {
+            name: '',
+            gender: '男',
+            remarks: '无备注信息'
+            protocol: false,
+            info: ''
+        };
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    handleInputChange (event) {
+        const target = event.target;
+        // 先判断输入元素类型
+        const value = target.type==='checkbox' ? target.checked : target.value;
+        const name = target.name;
+        // 使用 ES6 计算属性名称的语法更新给定输入名称对应的 state 值
+        this.setState({
+            [name]: value
+        });
+    }
+    handleSubmit (event) {
+        // setState()会自动将部分 state 合并到当前 state
+        this.setState({
+            info: `姓名：${this.state.name}，性别：${this.state.gender}，${this.state.protocol ? '同意' : '不同意'}XX协议，备注：${this.state.remarks}`
+        });
+        event.preventDefault();
+    } 
+    render () {
+        return (
+            <form>
+            <p>姓名：<input name="name" value={this.state.name} onChange={this.handleInputChange} /></p>
+            <p>性别：
+                <select name="gender" value={this.state.gender} onChange={this.handleInputChange}>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </p>
+            <p>其他备注信息：
+              <textarea name="remarks" value={this.state.remarks} onChange={this.handleInputChange} />
+            </p>
+            <p>是否同意XX协议：
+              <input name="protocol" type="checkbox" onChange={this.handleInputChange} checked={this.state.attend} />
+            </p>
+            <input type="submit" value="Submit" onClick={this.handleSubmit} />
+            </form>
+        )
+    }
+}
+```
+
+> 在受控组件上指定 value 的值可以防止用户更改输入。如果指定了 `value`，但输入仍可编辑，则可能是意外地将`value` 设置为 `undefined` 或 `null`。
+
 ### 3. 非受控组件
+
+总的来说，像 `<input type="text">`, `<textarea>` 和 `<select>` 之类的标签都非常相似——它们都接受一个 `value` 属性，你可以使用它来实现`受控组件`。大多数情况下使用受控组件也是实现表单的首选方案。
+
+但有时使用受控组件会很麻烦，因为你需要为每种数据变化的方式都编写事件处理函数。特别是当你将之前的代码库转换为 React 或将 React 应用程序与非 React 库集成时，这可能会令人厌烦。 在这些情况下，实现输入表单的另一种方式是使用`非受控组件`。
+
+另外，在 HTML 中`<input type=“file”>` 标签允许用户从存储设备中选择一个或多个文件，将其上传到服务器，或通过使用 JavaScript 的 [File API](https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications) 进行操作。因为它的值是只读的，只能由用户设置，而不能通过代码控制。所以在 React 中，`<input type="file" />` 始终是一个非受控组件，且应该使用 File API 与文件进行交互。
+
+在受控组件中，表单数据是由 React 组件处理的。而使用非受控组件时，表单数据将交由 DOM 节点来处理。在 React 中， [使用 ref](https://zh-hans.reactjs.org/docs/refs-and-the-dom.html) 即可代替原来的`e.target.value`，实现从 DOM 节点中获取表单数据。
+
+```jsx
+<input type="text" defaultValue="nickname" ref={input => this.input = input} />
+//在组件中使用 this.input.value 取到表单数据
+```
+
+- 在 JSX 中使用 ref 时最好使用 ES6 语法中的箭头函数，这样可以简洁明了的绑定DOM元素。
+- 要指定默认值，那么可以使用`defaultValue`，相应的，`type="checkbox"`和`type="radio"`，则使用`defaultChecked`。
+- 不建议用`ref`这样操作的，因为`React`的是数据驱动的，所以用ref会出现各种问题。
+
+关于 Refs 的详细信息：[Refs API](https://zh-hans.reactjs.org/docs/refs-and-the-dom.html) 👈
 
 ## 9. 状态提升
 

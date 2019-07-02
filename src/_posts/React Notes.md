@@ -213,6 +213,8 @@ ReactDOM.render(
 
 > State 与 props 类似，但是 state 是私有的，并且完全受控于当前组件。
 >
+> 如果某些数据可以由 props 或 state 推导得出，那么它就不应该存在于 state 中。
+>
 > state 允许 React 组件随用户操作、网络响应或者其他变化而动态更改输出内容。
 
 ```jsx
@@ -325,7 +327,7 @@ this.setState((state, props) => ({
 
 React 的`componentDidUpdate()`也是一个常用的生命周期方法。
 
-此外，`render()`方法也是React生命周期方法，这也是组件唯一必须定义的生命周期方法。
+此外，`render()`方法也是 React 生命周期方法，这也是组件唯一必须定义的生命周期方法。
 
 关于组件生命周期这部分的详细信息看下面的链接：
 
@@ -706,4 +708,10 @@ class Form extends React.Component {
 关于 Refs 的详细信息：[Refs API](https://zh-hans.reactjs.org/docs/refs-and-the-dom.html) 👈
 
 ## 9. 状态提升
+
+在 React 应用中，任何可变数据应当只有一个相对应的唯一“数据源”。通常，state 都是首先添加到需要渲染数据的组件中去。如果其他组件也需要这个 state，那么你可以将它提升至这些组件的最近共同父组件中，然后通过属性（props）传递给子组件。即：**应当依靠[自上而下的单向数据流](#_2-单向数据流)，而不是尝试在不同组件间同步 state。**
+
+🌡查看官网的[温度计算器demo](https://react.docschina.org/docs/lifting-state-up.html#lifting-state-up) 👈
+
+> 虽然提升 state 方式比双向绑定方式需要编写更多的“样板”代码，但带来的好处是，排查和隔离 bug 所需的工作量将会变少。由于“存在”于组件中的任何 state，仅有组件自己能够修改它，因此 bug 的排查范围被大大缩减了。
 

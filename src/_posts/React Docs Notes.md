@@ -598,7 +598,7 @@ class NameForm extends React.Component {
 
 另外，React 中的`textarea`标签和`select`标签与 HTML 中的用法还有些不同：
 
-1. 用 `<textarea>` 的表单和使用单行 input 的表单非常类似
+1. 用 `<textarea>` 的表单和使用单行 input 的表单非常类似。
 
 ```jsx
 // html
@@ -715,13 +715,98 @@ class Form extends React.Component {
 
 > 虽然提升 state 方式比双向绑定方式需要编写更多的“样板”代码，但带来的好处是，排查和隔离 bug 所需的工作量将会变少。由于“存在”于组件中的任何 state，仅有组件自己能够修改它，因此 bug 的排查范围被大大缩减了。
 
+## 10. 组合 VS 继承
+
+**1. 关于组合：**
+
+像 `Sidebar`（侧边栏）、 `Dialog`（对话框）这种展现通用的容器组件中，经常会遇到组件无法提前知晓它们子组件具体内容的情况。
+
+在 React 中，我们可以使用`props.children`来为它们将要放置的子组件预留位置：
+
 ```jsx
-function FancyBorder(props) {
+function ProfileCard(props) {
   return (
-    <div className={'FancyBorder FancyBorder-' + props.color}>
-      {props.children}
-    </div>
+    <section>
+      <h3>Personal Profile Card</h3>
+      <aside>{props.children}</aside>
+    </section>
   );
 }
 ```
 
+如此一来，别的组件可以通过 JSX 嵌套，将任意组件作为子组件传递给它们。
+
+```react
+function App() {
+  return (
+    <ProfileCard>
+      <h5>Mintnoii</h5>
+      <p>
+        Talk is cheap, show me the code!
+      </p>
+    </ProfileCard>
+  );
+}
+```
+
+渲染结果：
+
+```html
+<section>
+	<h3>Personal Profile Card</h3>
+  <aside>
+    <h5>Mintnoii</h5>
+    <p>
+      Talk is cheap, show me the code!
+    </p>
+  </aside>
+</section>
+```
+
+为了更方便的使用组件的组合，我们还可以不使用 `children`，而是自定义名称，然后将所要渲染的内容传入 props，并使用相应的 prop。比如：
+
+```react
+function ProfileCard(props) {
+  return (
+    <section>
+      <h3>{props.title}</h3>
+      <aside>{props.children}</aside>
+    </section>
+  );
+}
+
+function App() {
+  return (
+    <ProfileCard title={
+        <a>Awesome team</a>
+      }>
+      <p>
+        Talk is cheap, show me the code!
+      </p>
+    </ProfileCard>
+  );
+}
+```
+
+通过 props 传递进容器组件的 JSX 实际上会被转化为合法的 JS 表达式，然后渲染到结果中：
+
+```html
+<section>
+	<h3><a>Awesome team</a></h3>
+  <aside>
+    <p>
+      Talk is cheap, show me the code!
+    </p>
+  </aside>
+</section>
+```
+
+**2. 关于继承：**
+
+> Props 和组合为你提供了清晰而安全地定制组件外观和行为的灵活方式。
+>
+> 注意：组件可以接受任意 props，包括基本数据类型，React 元素以及函数。
+>
+> 如果你想要在组件间复用非 UI 的功能，我们建议将其提取为一个单独的 JavaScript 模块，如函数、对象或者类。组件可以直接引入（import）而无需通过 extend 继承它们。
+
+**要实现组件间的代码重用，React 更推崇的是使用组件组合的方式，而非继承。**

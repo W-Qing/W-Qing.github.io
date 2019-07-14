@@ -2,15 +2,15 @@
 category: React
 tags: 
   - Notes
-title: 'React笔记'
-description: 'React笔记'
-date: 2019-06-23
+title: 'React文档学习笔记'
+description: 'React文档学习笔记'
+date: 2019-07-05
 vssue: false
 ---
 
 <!-- more -->
 
-# React笔记
+# React文档学习笔记
 
 先撸一遍基础文档：[React官网文档](https://reactjs.org/docs/getting-started.html) 👈 [中文版](https://zh-hans.reactjs.org/docs/getting-started.html) 👈
 

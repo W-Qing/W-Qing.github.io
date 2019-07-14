@@ -41,7 +41,7 @@ module.exports = {
     header: {
       showTitle: true,
       background: {
-        url: 'https://cdn.ruguoapp.com/Fg35oNf5WanPiQ8pYb9Hrgs4uI1d.jpeg',
+        url: '/background/header.jpg',
         // '/background/header.png'
         // 其他页面是 header-image: 换行 - /background/header.png
         //useGeo: false,
@@ -51,7 +51,7 @@ module.exports = {
       }
     },
     // 是否显示文章的最近更新时间
-    lastUpdated: true,
+    lastUpdated: false,
     nav: [
       { text: 'Home', link: '/', exact: true },
       { text: 'Posts', link: '/posts/', exact: false  },

@@ -20,7 +20,7 @@ vssue-title: 'Webpack快速入门'
 
 ## 什么是 Webpack？
 
-自从出现模块化以后，我们可以将原本一坨代码分离到个个模块中，但是由此引发了一个问题。每个 JS 文件都需要从服务器去拿，这样会导致页面加载速度变慢。Webpack 最主要的目的就是为了解决这个问题，将所有小文件打包成一个或多个大文件，官网的图片就很好的诠释了这个事情。
+自从出现前端模块化以后，我们就可以将原本是一坨的代码分离到一个个的模块中。但是由此引发了一个问题，每个 JS 文件都需要浏览器通过网络请求向服务器去获取，这样会导致页面加载速度变慢。Webpack 最主要的目的就是为了解决这个问题，将项目中所有应用的文件和模块打包成一个或多个大文件。官网的图片就很好的诠释了这个事情：
 
 ![webpack](/articleImg/webpack.png)
 
@@ -28,7 +28,7 @@ vssue-title: 'Webpack快速入门'
 
 **WebPack是一个现代 JavaScript 应用程序的静态模块打包器(module bundler)：**
 
-它会分析你的项目结构，找到JavaScript模块以及其它的一些浏览器不能直接运行的扩展语言(如ES6、TypeScript、Sass等)，将其转换和打包为合适的格式后供浏览器使用。
+它会分析你的项目结构，找到 JavaScript 模块以及其它的一些浏览器不能直接运行的扩展语言(如ES6、TypeScript、Sass等)，将其转换和打包为合适的格式后供浏览器使用。
 
 ## Webpack 有什么作用？
 
@@ -64,17 +64,17 @@ vssue-title: 'Webpack快速入门'
 
 让 webpack 能够去处理那些非 JavaScript 文件（webpack 本身只能加载 JavaScript/JSON模块）。loader 可以将所有类型的资源文件转换为 webpack 能够处理的有效模块，然后你就可以利用 webpack 的打包能力，对它们进行处理。
 
-> loader本身是一个函数，接受源文件作为参数，返回转换后的结果。注意，loader 能够 import 导入任何类型的模块（例如 .css 文件），这是 webpack 特有的功能，其他打包程序或任务执行器的可能并不支持。我们认为这种语言扩展是有很必要的，因为这可以使开发人员创建出更准确的依赖关系图。
+> loader 本身是一个函数，接受源文件作为参数，返回转换后的结果。注意，loader 能够 import 导入任何类型的模块（例如 .css 文件），这是 webpack 特有的功能，其他打包程序或任务执行器的可能并不支持。我们认为这种语言扩展是有很必要的，因为这可以使开发人员创建出更准确的依赖关系图。
 
-[插件(plugins)](https://link.juejin.im/?target=https%3A%2F%2Fwww.webpackjs.com%2Fconcepts%2Fplugins%2F)
+**[插件(plugins)](https://link.juejin.im/?target=https%3A%2F%2Fwww.webpackjs.com%2Fconcepts%2Fplugins%2F)**
 
 loader 被用于转换某些类型的模块，而插件则可以用于执行范围更广的任务。插件的范围包括，从打包优化和压缩，一直到重新定义环境中的变量。插件接口功能极其强大，可以用来处理各种各样的任务。
 
 > 常用插件：
 >
 > - CleanWebpackPlugin：自动清除指定文件夹资源
-> - HtmlWebopackPlugin：根据模板自动生成html并引入script脚本
-> - UglifyJSPlugin：压缩JS代码
+> - HtmlWebopackPlugin：根据模板自动生成 html 并引入 script 脚本
+> - UglifyJSPlugin：压缩 JS 代码
 
 **[模式(mode)](https://link.juejin.im/?target=https%3A%2F%2Fwww.webpackjs.com%2Fconcepts%2Fmode%2F)**
 
@@ -90,8 +90,6 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 4. 这些模块会以 Entry 为单位进行分组，一个 Entry 和其所有依赖的 Module 被分到一个组也就是一个 Chunk(编码块)。
 5. 最后 Webpack 会把所有 Chunk 转换成文件输出。
 6. 在整个流程中 Webpack 会在恰当的时机执行 Plugin 里定义的逻辑。
-
-
 
 ## WebPack VS Grunt/Gulp？
 
@@ -110,8 +108,6 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 
 ![webpack的工作流程](/articleImg/webpack工作流程.png)
 
-
-
 ## 搭建前端开发环境
 
 在明白了Webpack的概念之后，我们现在一步步的开始简单的使用Webpack4.0+搭建基本的前端开发环境。
@@ -127,42 +123,40 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 ### 安装命令
 
 ```bash
-1、卸载默认： 
+# 卸载默认： 
 npm uninstall webpack
-
-2、全局安装：
+# 全局安装：
 npm install webpack -g
-
-3、局部安装： 
+# 局部安装： 
 npm install webpack webpack-cli --save-dev
-// 将 webpack 和 webpack-cli 放入项目开发环境依赖中
+# 将 webpack 和 webpack-cli 放入项目开发环境依赖中
 ```
 
-> - 不推荐全局安装，它会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中，可能会导致构建失败。
+> - **不推荐全局安装，它会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中，可能会导致构建失败。**
 > - webpack 即 webpack 核心库。它提供了很多 [API](https://webpack.js.org/api/node/), 在Node.js 脚本中通过  `require('webpack')` 的方式来使用 webpack。
-> - webpack-cli 是 webpack 的命令行工具。让我们可以不用写打包脚本，只需配置打包配置文件，然后在命令行输入 `webpack-cli --config webpack.config.js` 来使用 webpack, 简单很多。webpack 4 之前命令行工具是集成在 webpack 包中的，4.0 开始 webpack 包本身不再集成 cli。
+> - webpack-cli 是 webpack 的命令行工具。让我们可以不用写打包脚本，只需配置打包配置文件，然后在命令行输入 `webpack-cli --config webpack.config.js` 来使用 webpack, 简单很多。webpack 4 之前命令行工具是集成在 webpack 包中的，4.0 开始 webpack 包本身不再集成 cli。**简单来说，如果不安装 webpack-cli 这个包，我们就没办法在命令行中使用 webpack 里的各种命令。**
 > - webpack-serve (非必需) 是 webpack 提供的用来开发调试的服务器，让你可以用 <http://127.0.0.1:8080/> 这样的 url 打开页面来调试，有了它就不用配置 [nginx](https://nginx.org/en/) 了，方便很多。
 
 ### 准备工作
 
 ```bash
-1. 新建一个空的练习文件夹
+# 1. 新建一个空的练习文件夹
 mkdir  webpack-demo
 cd webpack-demo
 
-2. 创建 package.json npm的说明文件
-// 包括当前项目的基本信息，依赖模块，自定义的脚本任务
+# 2. 创建 package.json 
+# npm 的说明文件,包括当前项目的基本信息，依赖模块，自定义的脚本任务
 npm init 
-// 这里会问一些问题，可以直接回车跳过或者 npm init -y
+# 这里会问一些问题，可以直接回车跳过或者 npm init -y
 
-3. 局部安装
+# 3. 局部安装
 npm i webpack webpack-cli -D
 
-4. 创建项目代码文件夹src
+# 4. 创建项目代码文件夹src
 mkdir src
 cd src
 
-5. 创建项目入口文件
+# 5. 创建项目入口文件
 touch index.html
 touch index.js
 ```
@@ -171,54 +165,50 @@ index.html入口页面：
 
 ```html
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-  </head>
-  <body>
-      <h2>
-          这是webpack-demo的项目入口页面。
-      </h2>
-      <p id="test"></p>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Webpack 学习</title>
+</head>
+<body>
+    <div id="root"></div>
+</body>
 </html>
 ```
-
-注意这里我们不需要自己写 `<script src="./index.js"></script>`， 因为打包后的文件名和路径可能会变，所以我们稍后用 webpack 插件帮我们自动加上。
 
 index.js 入口文件：
 
 ```javascript
 let testStr = 'Hello World, this is a webpack-demo.'
-document.getElementById('test').innerText = testStr
+document.getElementById('root').innerText = testStr
 console.log(testStr)
 ```
 
 ### 自定义配置文件
 
-其实webpack 从 v4.0.0 开始已经可以一个配置文件都不写，实现**零配置**。
+其实webpack 从 v4.0.0 开始已经可以一个配置文件都不写(使用默认配置文件)，实现**零配置**。
 
 比如我们此时在终端执行`npx webpack`，发现 webpack 已经把 src/index.js 文件里的内容打包生成到了 dist (将来部署到服务器上的文件夹)目录 mian.js 文件里。
 
 ![npx webpack](/articleImg/npxwebpack.png)
 
-**关于如何运行webpack:**
+**🤖关于如何运行webpack:**
 
 - 这里直接执行 webpack 命令会提示command not found: webpack，这是因为我们之前没有将 webpack 以及 webpack-cli 进行全局安装，而是选择了在项目内局部安装。
-- 项目内安装的 webpack 实际上执行的是 node_modules 目录下 .bin 目录内的 webpack.js 脚本，所以使用`node ./node_modules/.bin/webpack`就可以启动webpack。
-- 更简单点的方式就是通过 npm 的包执行器 npx，`npx command` 默认就是执行 `./node_modules` 目录中安装的可执行脚本。如果这里 webpack 未安装，它也会自动从 npm 源下载安装后再执行。
-- 但是这样在4.0版本的webpack中，终端会出现未定义构建模式的WARNING(⚠️ 图中黄色警告信息)，所以最好的方式是在 package.json 文件的 scripts 里添加一段`"build": "webpack --mode development"`(默认production)后使用 `npm run build` 来运行webpack。
+- 项目内安装的 webpack 实际上执行的是 node_modules 目录下 .bin 目录内的 webpack.js 脚本，所以使用`node ./node_modules/.bin/webpack`就可以启动 webpack。
+- 更简单点的方式就是通过 npm 的包执行器 npx，`npx command` 默认就是执行 `./node_modules` 目录中安装的可执行脚本。如果这里 webpack 未安装，它也会自动从 npm 源下载安装后再执行。(使用`npx webapck -v`命令查看此项目安装的 webpack 版本号)
+- 但是这样在4.0版本的 webpack 中，终端会因为未定义 webpack 的构建模式(`mode`属性)而出现 WARNING⚠️ ，所以最好的方式是在 package.json 文件的 scripts 里添加一段`"build": "webpack --mode development"`(默认 production ，会压缩打包后的代码)后使用 `npm run build` 来运行 webpack。
 
+实际情况是，大多数项目都会需要我们对 webpack 增加更多的自定义配置信息，那么我们就需要在根目录下创建 webpack 的配置文件 `webpack.config.js` 。然后再执行 `npm run build`，webpack 就会使用我们在这个文件里定义的配置信息了。
 
-
-但实际情况下大多数项目都会需要很复杂的设置，要想给 webpack 增加更多的自定义配置信息，我们就需要在根目录下创建 webpack 的配置文件 `webpack.config.js` 。然后再执行 npm run build，webpack 就会使用我们在这个文件里定义的配置信息了。
-
-```cmd
+```bash
 cd webpack-demo
 touch webpack.config.js
 ```
 
-Webpack.config.js 中常用的基本配置信息：
+`webpack.config.js` 中常用的基本配置信息：
 
 ```javascript
 module.exports = {
@@ -232,18 +222,22 @@ module.exports = {
 }
 ```
 
-> 注意这个文件是在 node.js 中运行的，因此不支持 ES6 的 `import` 语法。
+> 注意这个文件是在 node.js 中运行的，遵循`CommonJS`规范，因此不支持 ES6 的 `import` 语法。
 
 ### 配置打包入口和出口
 
 ```JavaScript
-// 引入webpack自带的node核心模块
+// 引入 webpack 自带的 node 核心模块
 const path = require('path')
 
 module.exports = {
-    // 页面入口 js 文件
-    entry:  './src/index.js',
-    
+    /*
+    entry: {
+    	main:  './src/index.js'
+    }
+    */
+  	// 简写
+  	entry:  './src/index.js',
     // 配置打包输出相关
     output: {
       // 打包输出目录，必须使用绝对地址，输出文件夹路径
@@ -277,15 +271,17 @@ module.exports = {
   }
 ```
 
-> - path.join() 将第一个参数和第二个参数进行链接(路径连接)，该方法的主要用途在于，会正确使用当前系统的路径分隔符，Unix系统是 /，Windows系统是 \。
-> - path.resolve() 会把一个路径或路径片段的序列参数解析为一个绝对路径， 也可以变成相对路径。
-> - __dirname：当前文件夹的绝对路径。
+⚠️要自定义 webapck 打包后的 output 路径，必须要先引入 webpack 自带的 node 核心模块 path `const path = require('path')`。
+
+- `path.join()` 将第一个参数和第二个参数进行链接(路径连接)，该方法的主要用途在于，会正确使用当前系统的路径分隔符，Unix系统是 /，Windows系统是 \。
+- `path.resolve() `会把一个路径或路径片段的序列参数解析为一个绝对路径， 也可以变成相对路径。
+- `__dirname` 变量指的就是`webpack.config.js`这个文件所在的，当前这个目录的绝对路径。
 
 ### 打包 html 入口文件
 
-通过上面的配置，我们已经将入口 index.js 打包到了 dist 目录下的 app.js 文件里，此时在浏览器的入口文件 index.html 里引用这个 js 文件就能看到我们在index.js 写的代码运行结果了。
+通过上面的配置，执行`npm run build`之后我们可以发现 webpack 已经将打包入口文件 src/index.js 打包到了 dist 目录下的 bundle.js 文件里，此时在 src/index.html 文件里引用`<script src="../dist/bundle.js"></script>`文件后在浏览器打开就能看到我们在 src/index.js 写的代码运行结果了。
 
-可以，但没必要。 😏 因为这样手动引用 js 文件显得不智能，而且当我们修改配置文件里的打包输出的文件名后，html 里的引用路径就会出错。所以，我们可以使用 [html-webpack-plugin](https://link.juejin.im/?target=https%3A%2F%2Fwebpack.docschina.org%2Fplugins%2Fhtml-webpack-plugin%2F) 插件以 src/index.html 为模板来生成 html 文件 ，并将 HTML 引用路径和我们的构建结果自动关联起来。
+或者是将 src/index.html 移动到 dist 文件夹下，然后引入文件`<script src="./bundle.js"></script>`这样做也可以，但没必要。 😏 因为手动引用打包后的 js 文件显得一点都不智能，而且当我们修改配置文件里打包输出的文件名后，index.html 里的引用路径就会出错。所以我们可以使用 [html-webpack-plugin](https://link.juejin.im/?target=https%3A%2F%2Fwebpack.docschina.org%2Fplugins%2Fhtml-webpack-plugin%2F) 插件以 src/index.html 为模板来生成 dist/html 文件 ，并将 HTML 引用 JS 的路径和我们的构建结果自动关联起来。👏
 
 安装：
 
@@ -319,21 +315,20 @@ module.exports = {
 
 ```html
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>webpack App</title>
-  </head>
-  <body>
-	<h2>
-      这是webpack-demo的项目入口页面。
-  	</h2>
- 	<p id="test"></p>
-	<script type="text/javascript" src="app.js"></script>	       	  </body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Webpack 学习</title>
+</head>
+<body>
+    <div id="root"></div>
+<script type="text/javascript" src="bundle.js"></script></body>
 </html>
 ```
 
-> 插件已经自动帮我们把打包后的 app.js 文件正确地引用到这里啦。🥳
+> 插件已经自动帮我们把打包后的 bundle.js 文件正确地引用到这里啦。👆
 
 ### 打包 css/scss 文件
 
@@ -401,12 +396,7 @@ module.exports = {
 
 `npm install file-loader url-loader -D`
 
-**file-loader:** 可以用于处理很多类型的文件，它的主要作用是直接输出文件，把构建后的文件路径返回。
-
-**url-loader:** 如果图片较多，会发很多 http 请求，会降低页面性能。`url-loader` 会将引入的图片编码，生成 dataURl。相当于把图片数据翻译成一串字符。再把这串字符打包到文件中，最终只需要引入这个文件就能访问图片了。当然，如果图片较大，编码会消耗性能。因此 `url-loader` 提供了一个 limit 参数，小于 limit 字节的文件会被转为 DataURl，大于 limit 的还会使用 `file-loader` 进行 copy。
-
-> - url-loader 可以看作是增强版的 file-loader。
-> - url-loader 把图片编码成 base64 格式写进页面，从而减少服务器请求。
+**file-loader:** 不只是用来处理图片，可以用于处理很多类型的文件，它的主要作用是直接输出文件，把构建后的文件路径返回。
 
 添加图片资源文件夹：
 
@@ -416,7 +406,36 @@ mkdir assets && cd assets
 mkdir images 
 ```
 
-在 assets/images 文件夹内放入图片，并在 index.html 内加载引用：`<img src="./assets/images/webpack.jpg" alt="">`，然后编辑配置文件
+在 assets/images 文件夹内放入图片，并在 src/index.html 内加载：`<img src="./assets/images/webpack.jpg" alt="">`，然后编辑配置文件
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      // ...
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              outputPath: 'images/', //输出到dist的images文件夹
+              limit: 600 //是把小于600B的文件打成Base64的格式
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+执行 webpack 后，我们会发现  dist 目录下多出了 images 文件夹，里面就是打包后的图片文件。而同时 dist 内生成的 index.html 文件也正确加载了该资源。`<img src="images/c3a15be258d6b4608711ca123c23c4df.jpg" alt="">`
+
+**url-loader:** 有了`file-loader`就可以进行图片打包，但如果图片较多，就要发出很多 http 请求，会降低页面性能。`url-loader` 会将引入的图片编码，生成 dataURl。相当于把图片数据翻译成一串字符。再把这串字符打包到文件中，最终只需要引入这个文件就能访问图片了。当然，如果图片较大，编码会消耗性能。因此 `url-loader` 提供了一个 limit 参数，小于 limit 字节的文件会被转为 DataURl，大于 limit 的还会使用 `file-loader` 进行 copy。
+
+> - url-loader 可以看作是增强版的 file-loader。
+> - url-loader 在文件大小（单位 byte）低于指定的限制时，可以返回一个 DataURL。然后把图片编码成 base64 格式写进页面，从而减少服务器请求。
 
 ```javascript
 module.exports = {
@@ -437,11 +456,8 @@ module.exports = {
       }
     ]
   }
-  //...
 }
 ```
-
-执行 webpack 后，我们会发现  dist 目录下多出了 images 文件夹，里面就是打包后的图片文件。而同时 dist 内生成的 index.html 文件也正确加载了该资源。`<img src="images/c3a15be258d6b4608711ca123c23c4df.jpg" alt="">`
 
 > - 当文件大于 limit 时，url-loader 会调用 file-loader, 把文件储存到输出目录，并把引用的文件路径改写成输出后的路径
 >

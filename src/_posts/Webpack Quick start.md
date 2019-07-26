@@ -20,21 +20,23 @@ vssue-title: 'Webpack快速入门'
 
 ## 什么是 Webpack？
 
-自从出现前端模块化以后，我们就可以将原本是一坨的代码分离到一个个的模块中。但是由此引发了一个问题，每个 JS 文件都需要浏览器通过网络请求向服务器去获取，这样会导致页面加载速度变慢。Webpack 最主要的目的就是为了解决这个问题，将项目中所有应用的文件和模块打包成一个或多个大文件。官网的图片就很好的诠释了这个事情：
+自从出现前端模块化以后，我们就可以将原本是一坨的代码分离到一个个的模块中。但是由此引发了一个问题，每个 JS 文件都需要浏览器通过网络请求向服务器去获取，这样会导致页面加载速度变慢。
+
+Webpack 最主要的目的就是为了解决这个问题，将项目中所有应用的文件和模块打包成一个或多个大文件。官网的图片就很好的诠释了这个事情：👇
 
 ![webpack](/articleImg/webpack.png)
 
 
 
-**WebPack是一个现代 JavaScript 应用程序的静态模块打包器(module bundler)：**
+🗿**WebPack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler)：**
 
-它会分析你的项目结构，找到 JavaScript 模块以及其它的一些浏览器不能直接运行的扩展语言(如ES6、TypeScript、Sass等)，将其转换和打包为合适的格式后供浏览器使用。
+它会分析你的项目结构，找到 JavaScript 模块以及其它的一些浏览器不能直接运行的扩展语言(如 ES6、TypeScript、Sass 等)，将其转换和打包为合适的格式后供浏览器使用。
 
 ## Webpack 有什么作用？
 
 当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块，然后将所有这些模块打包成一个或多个 bundle。
 
-构建就是把源代码转换成发布到线上可执行的 JavaScript、CSS、HTML 代码，包括以下内容：
+**构建**就是把源代码转换成发布到线上可执行的 JavaScript、CSS、HTML 代码，包括以下内容：
 
 - **代码转换**：TypeScript 编译成 JavaScript、SCSS 编译成 CSS 等
 - **文件优化**：压缩 JavaScript、CSS、HTML 代码，压缩合并图片等
@@ -44,7 +46,7 @@ vssue-title: 'Webpack快速入门'
 - **代码校验**：在代码被提交到仓库前需要检测代码是否符合规范，以及单元测试是否通过
 - **自动发布**：更新完代码后，自动构建出线上发布代码并传输给发布系统
 
- 构建其实是工程化、自动化思想在前端开发中的体现。把一系列流程用代码去实现，让代码自动化地执行这一系列复杂的流程。
+ 构建其实是工程化、自动化思想在前端开发中的体现。把一系列流程用代码去实现，让代码自动化地执行这一系列复杂的流程。😎
 
 ## webpack 的基本概念
 
@@ -62,7 +64,7 @@ vssue-title: 'Webpack快速入门'
 
 **[加载器(loader)](https://link.juejin.im/?target=https%3A%2F%2Fwww.webpackjs.com%2Fconcepts%2Floaders%2F)**
 
-让 webpack 能够去处理那些非 JavaScript 文件（webpack 本身只能加载 JavaScript/JSON模块）。loader 可以将所有类型的资源文件转换为 webpack 能够处理的有效模块，然后你就可以利用 webpack 的打包能力，对它们进行处理。
+让 webpack 能够去处理那些非 JavaScript 文件（webpack 本身只能加载 JavaScript/JSON 模块）。loader 可以将所有类型的资源文件转换为 webpack 能够处理的有效模块，然后你就可以利用 webpack 的打包能力，对它们进行处理。
 
 > loader 本身是一个函数，接受源文件作为参数，返回转换后的结果。注意，loader 能够 import 导入任何类型的模块（例如 .css 文件），这是 webpack 特有的功能，其他打包程序或任务执行器的可能并不支持。我们认为这种语言扩展是有很必要的，因为这可以使开发人员创建出更准确的依赖关系图。
 
@@ -82,7 +84,7 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 
 > 简单来说，开发时可能需要打印 debug 信息，还有定义 `sourcemap` 、`UglifyJSPlugin`文件，而生产环境是用于线上的即代码都是压缩后，运行时不打印 debug 信息等。譬如 axios、antd 等我们的生产环境中需要使用到那么我们应该安装该依赖在生产环境中，而 `webpack-dev-server` 则是需要安装在开发环境中。
 
-**webpack 构建过程：**
+👾 **webpack 构建过程：** 🏗
 
 1. 从 Entry 里配置的 Module 开始递归解析 Entry 依赖的所有 Module。
 2. 每找到一个 Module， 就会根据配置的 Loader 去找出对应的转换规则。
@@ -93,7 +95,7 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 
 ## WebPack VS Grunt/Gulp？
 
-**其实Webpack和另外两个并没有太多的可比性，Gulp/Grunt是一种能够优化前端开发工作流程的工具，而WebPack是一种模块化的解决方案，不过Webpack的优点使得Webpack在很多场景下可以替代Gulp/Grunt类的工具。**
+**其实 Webpack 和另外两个并没有太多的可比性，Gulp/Grunt 是一种能够优化前端开发工作流程的工具，而 WebPack 是一种模块化的解决方案，不过 Webpack 的优点使它在很多场景下可以替代 Gulp/Grunt 类的工具。**
 
 ### Grunt 和 Gulp 的工作方式
 
@@ -104,13 +106,13 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 
 ### Webpack 的工作方式
 
-把你的项目当做一个整体，通过一个给定的主文件（如：index.js），Webpack将从这个文件开始找到你的项目的所有依赖文件（如：component.js 、helper.js ），然后将这些模块使用不同的loaders（第三方包）来处理它们，最后打包为一个浏览器可识别的JavaScript文件。（如：app.js）
+把你的项目当做一个整体，通过一个给定的主文件（如：index.js），Webpack 将从这个文件开始找到你的项目的所有依赖文件（如：component.js 、helper.js ），然后将这些模块使用不同的 loaders（第三方包）来处理它们，最后打包为一个浏览器可识别的 JavaScript 文件。（如：app.js）👇
 
 ![webpack的工作流程](/articleImg/webpack工作流程.png)
 
 ## 搭建前端开发环境
 
-在明白了Webpack的概念之后，我们现在一步步的开始简单的使用Webpack4.0+搭建基本的前端开发环境。
+在明白了 Webpack 的概念之后，我们现在一步步的开始简单的使用 Webpack4.0+ 搭建基本的前端开发环境。👨🏻‍💻
 
 **主要包括以下几个方面：**
 
@@ -132,10 +134,10 @@ npm install webpack webpack-cli --save-dev
 # 将 webpack 和 webpack-cli 放入项目开发环境依赖中
 ```
 
-> - **不推荐全局安装，它会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中，可能会导致构建失败。**
-> - webpack 即 webpack 核心库。它提供了很多 [API](https://webpack.js.org/api/node/), 在Node.js 脚本中通过  `require('webpack')` 的方式来使用 webpack。
-> - webpack-cli 是 webpack 的命令行工具。让我们可以不用写打包脚本，只需配置打包配置文件，然后在命令行输入 `webpack-cli --config webpack.config.js` 来使用 webpack, 简单很多。webpack 4 之前命令行工具是集成在 webpack 包中的，4.0 开始 webpack 包本身不再集成 cli。**简单来说，如果不安装 webpack-cli 这个包，我们就没办法在命令行中使用 webpack 里的各种命令。**
-> - webpack-serve (非必需) 是 webpack 提供的用来开发调试的服务器，让你可以用 <http://127.0.0.1:8080/> 这样的 url 打开页面来调试，有了它就不用配置 [nginx](https://nginx.org/en/) 了，方便很多。
+> - **不推荐全局安装，它会将你项目中的 webpack 锁定到指定版本，并且在使用不同的 webpack 版本的项目中，可能会导致构建失败。** ⚠️
+> - webpack 即 webpack 核心库。它提供了很多 [API](https://webpack.js.org/api/node/), 在 Node.js 脚本中通过  `require('webpack')` 的方式来使用 webpack。
+> - webpack-cli 是 webpack 的命令行工具。让我们可以不用写打包脚本，只需配置打包配置文件，然后在命令行输入 `webpack-cli --config webpack.config.js` 来使用 webpack, 简单很多。webpack 4 之前命令行工具是集成在 webpack 包中的，4.0 开始 webpack 包本身不再集成 cli。**简单来说，如果不安装 webpack-cli 这个包，我们就没办法在命令行中使用 webpack 里的各种命令。** 🤷🏻‍♂️
+> - webpack-serve (非必需) 是 webpack 提供的用来开发调试的服务器，让你可以用 <http://127.0.0.1:8080/> 这样的 url 打开页面来调试，有了它就不用配置 [nginx](https://nginx.org/en/) 了，方便很多。 🍻
 
 ### 准备工作
 
@@ -188,7 +190,7 @@ console.log(testStr)
 
 ### 自定义配置文件
 
-其实webpack 从 v4.0.0 开始已经可以一个配置文件都不写(使用默认配置文件)，实现**零配置**。
+其实 webpack 从 v4.0.0 开始已经可以一个配置文件都不写，实现**零配置** (使用默认配置文件)。😶
 
 比如我们此时在终端执行`npx webpack`，发现 webpack 已经把 src/index.js 文件里的内容打包生成到了 dist (将来部署到服务器上的文件夹)目录 mian.js 文件里。
 
@@ -198,10 +200,12 @@ console.log(testStr)
 
 - 这里直接执行 webpack 命令会提示command not found: webpack，这是因为我们之前没有将 webpack 以及 webpack-cli 进行全局安装，而是选择了在项目内局部安装。
 - 项目内安装的 webpack 实际上执行的是 node_modules 目录下 .bin 目录内的 webpack.js 脚本，所以使用`node ./node_modules/.bin/webpack`就可以启动 webpack。
-- 更简单点的方式就是通过 npm 的包执行器 npx，`npx command` 默认就是执行 `./node_modules` 目录中安装的可执行脚本。如果这里 webpack 未安装，它也会自动从 npm 源下载安装后再执行。(使用`npx webapck -v`命令查看此项目安装的 webpack 版本号)
-- 但是这样在4.0版本的 webpack 中，终端会因为未定义 webpack 的构建模式(`mode`属性)而出现 WARNING⚠️ ，所以最好的方式是在 package.json 文件的 scripts 里添加一段`"build": "webpack --mode development"`(默认 production ，会压缩打包后的代码)后使用 `npm run build` 来运行 webpack。
+- **更简单点的方式就是通过 npm 的包执行器 npx，`npx command` 默认就是执行 `./node_modules` 目录中安装的可执行脚本。如果这里 webpack 未安装，它也会自动从 npm 源下载安装后再执行。(使用`npx webapck -v`命令查看此项目安装的 webpack 版本号)** 🤠
+- **但是在4.0版本的 webpack 中，终端会因为未定义 webpack 的构建模式(`mode`属性)而出现 WARNING⚠️ ，所以最好的方式是在 package.json 文件的 scripts 里添加一段`"build": "webpack --mode development"`(默认 production ，会压缩打包后的代码)后使用 `npm run build` 来运行 webpack。** 👏
 
-实际情况是，大多数项目都会需要我们对 webpack 增加更多的自定义配置信息，那么我们就需要在根目录下创建 webpack 的配置文件 `webpack.config.js` 。然后再执行 `npm run build`，webpack 就会使用我们在这个文件里定义的配置信息了。
+实际情况是，大多数项目都会需要我们对 webpack 增加更多的自定义配置信息，那么我们就需要在根目录下创建 webpack 的配置文件 `webpack.config.js` 。🙃
+
+然后再执行 `npm run build`，webpack 就会使用我们在这个文件里定义的配置信息了。
 
 ```bash
 cd webpack-demo
@@ -248,7 +252,7 @@ module.exports = {
   }
 ```
 
-也可以使用下面的写法：
+也可以使用下面的写法：👇
 
 ```javascript
 const path = require('path')
@@ -279,9 +283,13 @@ module.exports = {
 
 ### 打包 html 入口文件
 
-通过上面的配置，执行`npm run build`之后我们可以发现 webpack 已经将打包入口文件 src/index.js 打包到了 dist 目录下的 bundle.js 文件里，此时在 src/index.html 文件里引用`<script src="../dist/bundle.js"></script>`文件后在浏览器打开就能看到我们在 src/index.js 写的代码运行结果了。
+通过上面的配置，执行`npm run build`之后我们可以发现 webpack 已经将打包入口文件 src/index.js 打包到了 dist 目录下的 bundle.js 文件里。
 
-或者是将 src/index.html 移动到 dist 文件夹下，然后引入文件`<script src="./bundle.js"></script>`这样做也可以，但没必要。 😏 因为手动引用打包后的 js 文件显得一点都不智能，而且当我们修改配置文件里打包输出的文件名后，index.html 里的引用路径就会出错。所以我们可以使用 [html-webpack-plugin](https://link.juejin.im/?target=https%3A%2F%2Fwebpack.docschina.org%2Fplugins%2Fhtml-webpack-plugin%2F) 插件以 src/index.html 为模板来生成 dist/html 文件 ，并将 HTML 引用 JS 的路径和我们的构建结果自动关联起来。👏
+此时在 src/index.html 文件里引用`<script src="../dist/bundle.js"></script>`文件后在浏览器打开就能看到我们在 src/index.js 写的代码运行结果了。或者也可以将 src/index.html 移动到 dist 文件夹下，然后引入文件`<script src="./bundle.js"></script>`。
+
+这样做也可以，但没必要。 😏 因为手动引用打包后的 js 文件显得一点都不智能，而且当我们修改配置文件里打包输出的文件名后，index.html 里的引用路径就会出错。
+
+所以我们可以使用 [html-webpack-plugin](https://link.juejin.im/?target=https%3A%2F%2Fwebpack.docschina.org%2Fplugins%2Fhtml-webpack-plugin%2F) 插件以 src/index.html 为模板来生成 dist/html 文件 ，并将 HTML 引用 JS 的路径和我们的构建结果自动关联起来。👏
 
 安装：
 
@@ -295,13 +303,13 @@ module.exports = {
   //...
   plugins: [
       new HtmlWebpackPlugin({
-          filename: 'index.html', 
-          template: './src/index.html',
-          /*
+        filename: 'index.html', 
+        template: './src/index.html',
+      /*
       因为和 webpack 4 的兼容性问题，chunksSortMode 参数需要设置为 none
       https://github.com/jantimon/html-webpack-plugin/issues/870
       */
-          chunksSortMode: 'none'
+        chunksSortMode: 'none'
       })
   ]
 }
@@ -336,9 +344,9 @@ module.exports = {
 
 前者可以让 css 文件也支持 `import`，并且会解析 css文件，后者可以将解析出来的 css 通过标签的形式插入到 HTML 中，所以后者依赖前者。
 
-如果要处理 scss 文件，还需要引入`sass-loader`loader，同样，它依赖于前两个loader。同时还要安装`node-sass`，[node-sass](https://github.com/sass/node-sass) 是 sass-loader 的[`peerDependency`](https://docs.npmjs.com/files/package.json#peerdependencies)。
+另外，如果要处理 scss 文件，还需要引入`sass-loader`。同样，它依赖于前两个loader。同时还要安装`node-sass`，[node-sass](https://github.com/sass/node-sass) 是 sass-loader 的[`peerDependency`](https://docs.npmjs.com/files/package.json#peerdependencies)。
 
-> PS：注意是 sass-loader 不是 scss-loader 哦！🤪
+> 💣 **注意是 sass-loader 不是 scss-loader 哦！** 🤪
 
 安装：
 
@@ -468,6 +476,9 @@ module.exports = {
 >   <!--会被编译成-->
 >   <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAA...">
 >   ```
+> ```
+> 
+> ```
 
 ### 配置 babel
 

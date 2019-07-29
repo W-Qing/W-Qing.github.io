@@ -3,27 +3,28 @@ category: Notes
 tags: 
   - Node.js
 title: '初识Node.js'
-description: '一切能用Js实现的，终将被Js实现。'
+description: '一切能用 JS 实现的，终将被 JS 实现。'
 date: 2018-05-15
+vssue: false
 vssue-title: '初识Node.js'
 ---
 
 <!-- more -->
 
-## Node.js是什么
+## Node.js是什么?
 
 **Node.js® is a JavaScript runtime built on Chrome’s V8 JavaScript engine.Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient.Node.js’ package ecosystem, npm, is the largest ecosystem of open source libraries in the world.**
 
 > Node.js 是一个基于 Chrome V8 引擎的 JavaScript 运行环境。Node.js 使用了一个事件驱动、非阻塞式 I/O 的模型，使其轻量又高效。Node.js 的包管理器 npm，是全球最大的开源库生态系统。
 
-- Node.js既不是一门新的语言，也不是框架，它是JavaScript在服务器端的运行环境 。
+🗿**Node.js 既不是一门新的语言，也不是框架，它是 JavaScript 在服务器端的运行环境 。**
 
 所谓“运行环境（平台）”有两层意思：
 
-- 首先，**编程语言能做什么取决于平台，也就是它的运行环境。** JavaScript最早是运行在浏览器中，然而浏览器只是提供了一个上下文，它定义了使用JavaScript可以做什么，但并没有“说”太多关于JavaScript语言本身可以做什么。事实上，JavaScript是一门“完整”的语言，它可以使用在不同的上下文中，其能力与其他同类语言相比有过之而无不及。Node事实上就是另外一种上下文， 内部使用Google Chrome的V8 引擎在服务端解释执行JavaScript代码，在这个意义上Node有点像JavaScript的虚拟机。
-- 其次，**是Node选择了JavaScript，而不是JavaScript发展出了Node。** Node提供大量工具库（通过自行开发的libuv库，调用系统资源），使得JavaScript语言与操作系统交互（比如文件读写，新建子进程），在这个意义上，Node又是JavaScript的工具库。
+1. 首先，**编程语言能做什么取决于平台，也就是它的运行环境。** JavaScript 最早是运行在浏览器中，然而浏览器只是提供了一个上下文，它定义了使用 JavaScript 可以做什么，但并没有“说”太多关于 JavaScript 语言本身可以做什么。事实上，JS 是一门“完整”的语言，它可以使用在不同的上下文中，其能力与其他同类语言相比有过之而无不及。Node 事实上就是另外一种上下文， 内部使用 Google Chrome 的 V8  引擎在服务端解释执行 JavaScript 代码，在这个意义上 Node 有点像 JavaScript 的虚拟机。
+2. 其次，**是 Node 选择了 JavaScript，而不是 JavaScript 发展出了 Node。** Node 提供大量工具库（通过自行开发的 libuv 库，调用系统资源），使得 JavaScript 语言与操作系统交互（比如文件读写，新建子进程），在这个意义上，Node 又是JavaScript 的工具库。
 
-## Node.js能干什么
+## Node.js能干什么?
 
 - 高性能的Web服务器
 - 实时多人游戏后台服务器
@@ -35,7 +36,7 @@ vssue-title: '初识Node.js'
 - 移动开发
 - … …
 
-## 认识Node中的Javascript
+## 认识 Node 中的 Javascript
 
 - ECMAScript
 
@@ -55,7 +56,7 @@ vssue-title: '初识Node.js'
 
   > Node中还有一个很重要的概念：模块系统（ 其遵循CommonJS的模块规范）
 
-## 创建一个简单的Http服务应用
+## 创建一个简单的 Http 服务应用
 
 Node.js 应用是由哪几部分组成的：
 

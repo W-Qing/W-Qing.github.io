@@ -289,7 +289,7 @@ module.exports = {
 
 这样做也可以，但没必要。 😏 因为手动引用打包后的 js 文件显得一点都不智能，而且当我们修改配置文件里打包输出的文件名后，index.html 里的引用路径就会出错。
 
-所以我们可以使用 [html-webpack-plugin](https://link.juejin.im/?target=https%3A%2F%2Fwebpack.docschina.org%2Fplugins%2Fhtml-webpack-plugin%2F) 插件以 src/index.html 为模板来生成 dist/html 文件 ，并将 HTML 引用 JS 的路径和我们的构建结果自动关联起来。👏
+所以我们可以使用 [html-webpack-plugin](<https://webpack.docschina.org/plugins/html-webpack-plugin/>) 插件以 src/index.html 为模板来生成 dist/html 文件 ，并将 HTML 引用 JS 的路径和我们的构建结果自动关联起来。👏
 
 安装：
 
@@ -340,17 +340,23 @@ module.exports = {
 
 ### 打包 css/scss 文件
 
-接下来如果我们希望使用 webpack 来进行构建 css 文件，那么就需要在配置文件中引入`css-loader`和 `style-loader`这两个 loader 来解析和处理 css文件。
+接下来如果我们希望使用 webpack 来进行构建 css 文件，那么就需要在配置文件中引入 [css-loader](<https://webpack.docschina.org/loaders/css-loader/>) 和  [style-loader](<https://webpack.docschina.org/loaders/style-loader/>) 这两个 loader 来解析和处理 css文件。
 
-前者可以让 css 文件也支持 `import`，并且会解析 css文件，后者可以将解析出来的 css 通过标签的形式插入到 HTML 中，所以后者依赖前者。
-
-另外，如果要处理 scss 文件，还需要引入`sass-loader`。同样，它依赖于前两个loader。同时还要安装`node-sass`，[node-sass](https://github.com/sass/node-sass) 是 sass-loader 的[`peerDependency`](https://docs.npmjs.com/files/package.json#peerdependencies)。
-
-> 💣 **注意是 sass-loader 不是 scss-loader 哦！** 🤪
+为什么要安装两个 loader，是因为前者可以让 css 文件也支持 `import`，并且会解析多个 css 文件的关系，最终把它们合并成一段 css。后者可以将解析出来的 css 通过 `style` 标签的形式插入到 HTML 页面中的 `<head>` 部分，所以  `style-loader` 依赖 `css-loader` 。
 
 安装：
 
-`npm install css-loader style-loader sass-loader -D`
+`npm install css-loader style-loader -D`
+
+另外，如果要处理 scss 文件，还需要引入 `sass-loader`。同样，它依赖于前两个loader。
+
+**同时还要安装 `node-sass`，[node-sass](https://github.com/sass/node-sass) 是 sass-loader 的 [peerDependency](https://docs.npmjs.com/files/package.json#peerdependencies)。**(ps:就是安装很慢的那个 🙄
+
+安装：
+
+`npm install sass-loader node-sass -D`
+
+> 💣 **注意是 sass-loader 不是 scss-loader 哦！** 🤪
 
 添加样式文件：
 
@@ -360,7 +366,7 @@ mkdir styles && cd styles
 touch index.scss
 ```
 
-在 reset.scss 文件里编辑样式代码后，并且在 src/index.js 中引入 `import './styles/index.scss'`
+在 index.scss 文件里编辑样式代码后，并且在 src/index.js 中引入 `import './styles/index.scss'`
 
 修改 `webpack.config.js` 文件：
 
@@ -387,6 +393,7 @@ module.exports = {
         include: [path.resolve(__dirname, 'src')],
         use: ['style-loader', 'css-loader', 'sass-loader']
         // loader的执行顺序是从右至左/从下往上。
+        // use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader']
       }
     ]
   }
@@ -394,9 +401,13 @@ module.exports = {
 }
 ```
 
-如果匹配到 scss 文件那么首先经过 sass-loader 处理为 css ，然后 css-loader 将 css 内容存为 js 字符串，并转化成 CommonJS 模块，把 background、@font-face 等引用的图片，字体文件交给指定的 loader 打包。最后 style-loader 将 js 字符串生成为 style 节点。
+1. 如果匹配到 scss 文件那么首先经过 sass-loader 翻译处理为 css。
+2. 然后 css-loader 将 css 文件内容存为 js 字符串，并转化成 CommonJS 模块，把 background、@font-face 等引用的图片，字体文件交给指定的 loader 打包。
+3. 最后 style-loader 将 js 字符串生成为 style 节点挂载到页面的 head 里。
 
-经由上述 loader 的处理后，css/scss 代码会转变为 JS， 如果需要单独把 css 文件分离出来，我们需要使用 [mini-css-extract-plugin](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fwebpack-contrib%2Fmini-css-extract-plugin) 插件。
+经由上述 sass-loader 和 css-loader 的处理后，css/scss 代码会转变为 JS， 如果需要单独把 css 文件分离出来，我们需要使用 [mini-css-extract-plugin](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fwebpack-contrib%2Fmini-css-extract-plugin) 插件。
+
+同时，在使用 css3 里一些需要添加厂商前缀的新特性的时候，我们可以使用 [postcss-loader](<https://webpack.docschina.org/loaders/postcss-loader/>) 配合 [autoprefixer](<https://webpack.js.org/loaders/postcss-loader/#autoprefixing>) 插件来实现自动添加厂商前缀。
 
 ### 打包图片
 

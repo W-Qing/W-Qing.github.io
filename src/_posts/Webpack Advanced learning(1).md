@@ -423,3 +423,27 @@ import(/* webpackPrefetch: true */ './click.js').then(({default: func}) => {
 至于 webpackPreload，与 webpackPrefetch 不同的一点就在于它是和业务代码主线程一起去加载的。
 
 > 这里也并不适用 webpackPreload，关于两者细节的区别请查看文档。另外不正确地使用 webpackPreload 也会有损性能。
+
+## 打包分析
+
+当我们使用 webpack 对各种模块代码进行了分离打包之后，理所应当应该利用一些打包分析的工具来对输出的结果进行检查，分析是否合理。
+
+使用[webpack 官方打包分析工具](https://github.com/webpack/analyse)生成一个打包分析的说明文件 stats.json，然后可以上传到[这里](http://webpack.github.com/analyse)上查看结果。
+
+```js
+// package.json
+"scripts": {
+  // 可以在 build 字段中加入 --profile --json > stats.json 
+  "build": "webpack --profile --json > stats.json --config webpack.prod.js",
+  // 也可以专门添加一条生成分析文件的指令
+  "analyse": "webpack --profile --json  > stats.json"
+},
+```
+
+其他一些打包分析的可视化工具：
+
+- [webpack-chart](https://alexkuz.github.io/webpack-chart/)：webpack stats 可交互饼图。
+- [webpack-visualizer](https://chrisbateman.github.io/webpack-visualizer/)：可视化并分析你的 bundle，检查哪些模块占用空间，哪些可能是重复使用的。
+- [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)：一个 plugin 和 CLI 工具，它将 bundle 内容展示为便捷的、交互式、可缩放的树状图形式。
+- [webpack bundle optimize helper](https://webpack.jakoblind.no/optimize)：此工具会分析你的 bundle，并为你提供可操作的改进措施建议，以减少 bundle 体积大小。
+

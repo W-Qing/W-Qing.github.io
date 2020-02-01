@@ -320,7 +320,7 @@ document.addEventListener('click', () => {
 })
 ```
 
-## SplitChunksPlugin 详细配置
+## SplitChunksPlugin 配置
 
 上面👆我们通过设置 SplitChunksPlugin 的`splitChunks.chunks`配置就实现了去除重复依赖项以及同步与异步动态引入代码的打包分离。
 
@@ -370,3 +370,56 @@ optimization: {
 **cacheGroups：** 缓存组 打包同步引入的代码时必须配合这个配置项一起使用才能生效，它决定分离出来的代码到底要放到哪个文件里面。vendors 为默认的分组名，test 为模块来源，priority 当前组的优先级，先放入优先级高的分组下的文件里。reuseExistingChunk 忽略已打包过的模块，直接复用。
 
 想要更好的控制代码分离的流程，请查阅[SplitChunksPlugin](https://webpack.docschina.org/plugins/split-chunks-plugin/)。
+
+## Prefetch 和 Preload
+
+既然我们通过将`splitChunks.chunks`字段配置成 all 之后，可以同时对同步与异步代码进行分割，将 loadash、jQuery 等代码单独分割打包生成一个文件。在第一次加载后，再次访问就可以使用浏览器缓存来提高访问速度。
+
+**那为什么 webpack 还要将其默认值设为`async,`只对异步代码进行分割打包呢？**
+
+这是因为按照我们的上述配置，只通过将 jQuery、loadash 打包成单独的文件，加载后使用缓存只能提高第二次及以后再访问这些文件时的速度，而不能真正对页面访问性能做优化。webpack 所希望达到的效果是第一次访问页面时，它的速度就是最快的。
+
+```js
+document.addEventListener('click', () => {
+	const element = document.createElement('div');
+	element.innerHTML = 'Bingo!!!';
+	document.body.appendChild(element);
+})
+```
+
+比如这样一段代码，在页面加载之后，我们可以在 Chrome 控制台通过查看到 Sources 源文件里代码的执行情况以及 Coverage 的 Unused Bytes 覆盖率。 其中点击回调方法里的代码是需要点击之后才会被覆盖执行到的。
+
+如果想提高页面核心代码的利用率，我们可以将那些交互之后才用到的代码方法封装到另外一个文件中，再在需要执行的时候将其加载进来。
+
+```js
+// 将点击的回调方法封装进 click.js
+function handleClick() { 
+  const element = document.createElement('div');
+	element.innerHTML = 'Bingo!!!';
+	document.body.appendChild(element);
+}
+export default handleClick;
+// index.js
+document.addEventListener('click', () => {
+	// 这里通过 default 来拿到导出的方法后重命名为 func
+	import('./click.js').then(({default: func}) => {
+		func();
+	})
+})
+```
+
+由此可见，webpack 认为只有这种异步的组件才能真正的提升网页的打包性能。而同步的代码模块只能增加一个缓存，而对性能的提升是有限的。即我们**在做前端代码性能优化的时候，最重要的点其实不是缓存，而是 Code Coverage 代码覆盖率。即缓存带来的代码性能提升是非常有限的，而应该通过提高页面核心代码的覆盖和利用率，从而提升代码性能与页面加载速度。**
+
+一些网站的登录模态框功能就是使用这种方式去实现的，但是如果我们只在点击后才去加载登录相关的代码，加载速度有可能会比较慢，影响用户体验。那么此时就需要用到 webpack [预取 prefetching 和预加载 preloading 模块](https://webpack.docschina.org/guides/code-splitting/#预取-预加载模块-prefetch-preload-module-))的功能。从而既能提高首页核心代码的加载速度，同时也可以在页面展示完成后将登陆功能的代码加载进来，保证用户点击登录后的快速响应。
+
+```js
+import(/* webpackPrefetch: true */ './click.js').then(({default: func}) => {
+		func();
+	})
+```
+
+通过加入`/* webpackPrefetch: true */`后我们就可以等待页面核心代码加载完成之后，浏览器带宽闲置时再去懒加载 prefetch 对应的文件。
+
+至于 webpackPreload，与 webpackPrefetch 不同的一点就在于它是和业务代码主线程一起去加载的。
+
+> 这里也并不适用 webpackPreload，关于两者细节的区别请查看文档。另外不正确地使用 webpackPreload 也会有损性能。

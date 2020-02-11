@@ -139,17 +139,11 @@ plugins:[
 
 ## Tree Shaking
 
-将模块中用不到的方法摇晃掉
+开发过程中我们经常会需要 import 一些外部的公共方法来实现方法复用，但我们大多数时候都是只需要这个公共方法模块里的几个方法，而不是全部。借助 Tree Shaking，我们就可以将模块中没有用到的方法摇晃掉。
 
-tree shaking 只支持静态的 import 的 ES module 方式的引入
+> Tree Shaking 只支持 ES module 这种静态的 import 的模块引入方式，而不支持 common js 动态的 require 引入方式。
 
-而不支持动态的 require 的 common js 的引入方式
-
-配置：
-
-默认的 development 的 mode 是没有 tree shaking 功能的
-
-要想加上 tree shaking 首先在配置文件中加入 optimization 配置项
+**配置：** 默认的开发模`mode: 'development'`  是没有 tree shaking 功能的，要想加上 tree shaking 首先在配置文件中加入 optimization 配置项。
 
 ```javascript
 {
@@ -157,28 +151,35 @@ tree shaking 只支持静态的 import 的 ES module 方式的引入
     //...
   ],
   optimization: {
-    usedExports: true // 只讲使用到的导出模块进行打包
+    usedExports: true // 只将使用到的导出模块进行打包
   },
 }
 ```
 
-但是这样会可能遗漏掉那些不导出任何内容的模块，比如@babel/poly-fill 
+但是这样会可能遗漏掉那些不导出任何内容的模块。实际上，只要 import 引入一个模块，Tree Shaking 就会检查这个模块导出了什么，代码引用了什么，如果没有导出或者没有引用，就会忽略这个模块引入。
 
-此时要在 package.json 中加入“sideEffects”配置项，将那些需要特殊处理的模块放进去
+比如`@babel/poly-fill `这种只是单纯地在 window 对象上绑定了一些全局变量而不导出内容的模块，还有代码里引入的一些样式 CSS 或 SCSS 文件。
+
+此时要在 package.json 中加入`sideEffects`配置，将这些需要特殊处理的模块放进一个数组里。
 
 ```javascript
 {
   "name": 'webpack-demo',
-  "sideEffects": ["@babel/poly-fill"]
-  // 如果业务逻辑里没有要特殊处理的模块就直接讲 sideEffects 设为 false
+  "sideEffects": [
+    "@babel/poly-fill",
+    "*.css",
+    "*.scss"
+  ]
+  // 如果业务逻辑里没有要特殊处理的模块就直接将 sideEffects 设为 false
   // "sideEffects:false"
 }
 ```
 
-一般需要处理的还有"*.css"或者是"*.scss"
+其实 Development 模式下，即使我们配置了 tree shaking ，它也不会将你不用的代码从打包后的 main.js 中剔除掉，而只是在注释中提醒你一下。🌚
 
-Development 模式下 即使你配置了 tree shaking ，他也不会将你不用的代码从打包后的 main.js 中剔除掉，而只是在注释中提醒你一下。这是因为我们在开发环境生成的代码一般都需要做一些调试，如果 tree shaking 把一些代码删除掉的话，sourceMap 代码对应的一些行数就会错误，所以开发环境下的 tree shaking 还会保留这些代码。但是如果我们真正的要将项目打包上线，将 mode 改为 production ，那么它就会生效了。但同时要注意这时我们的 devtool 属性在生成环境一般都使用 cheap-module-source-map 而不是带 eval 的配置。
+这是因为我们在开发环境生成的代码一般都需要做一些调试，如果 tree shaking 把一些代码删除掉的话，sourceMap 代码对应的一些行数就会错误，所以开发环境下的 tree shaking 还会保留这些代码。但是如果我们真正的要将项目打包上线，将 mode 改为 production，那么它就会生效了。但同时要注意这时我们的 devtool 属性在生成环境一般都使用`cheap-module-source-map`而不是带 eval 的配置。
 
-其实在生产环境下 我们甚至都不用写上面的 optimization 配置，它会默认按这个配置去执行。但是 sideEffects 还是要自己配置的
+另外在生产环境下，我们甚至都不用写上面的 optimization 配置，它会默认按这个配置去执行。但是 sideEffects 还是要自己配置的。🤪
 
 ## Code Splitting
+

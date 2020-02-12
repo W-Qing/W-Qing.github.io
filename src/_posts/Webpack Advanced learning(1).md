@@ -158,7 +158,7 @@ plugins:[
 
 但是这样会可能遗漏掉那些不导出任何内容的模块。实际上，只要 import 引入一个模块，Tree Shaking 就会检查这个模块导出了什么，代码引用了什么，如果没有导出或者没有引用，就会忽略这个模块引入。
 
-比如`@babel/poly-fill `这种只是单纯地在 window 对象上绑定了一些全局变量而不导出内容的模块，还有代码里引入的一些样式 CSS 或 SCSS 文件。
+比如`@babel/poly-fill `这种只是单纯地在 window 对象上绑定了一些全局变量而不导出内容的模块，或者是代码里引入的一些 CSS、SCSS 样式文件。
 
 此时要在 package.json 中加入`sideEffects`配置，将这些需要特殊处理的模块放进一个数组里。
 
@@ -180,6 +180,41 @@ plugins:[
 这是因为我们在开发环境生成的代码一般都需要做一些调试，如果 tree shaking 把一些代码删除掉的话，sourceMap 代码对应的一些行数就会错误，所以开发环境下的 tree shaking 还会保留这些代码。但是如果我们真正的要将项目打包上线，将 mode 改为 production，那么它就会生效了。但同时要注意这时我们的 devtool 属性在生成环境一般都使用`cheap-module-source-map`而不是带 eval 的配置。
 
 另外在生产环境下，我们甚至都不用写上面的 optimization 配置，它会默认按这个配置去执行。但是 sideEffects 还是要自己配置的。🤪
+
+## 开发与生产模式的配置
+
+由上可见，开发环境与线上生产环境的配置在很多地方是有区别的。为了方便起见，我们也可以编写两份不同的配置文件，来实现两种环境的切换。
+
+```javascript
+// package.json 文件
+"scripts": {
+  // "start": "webpack-dev-server --open"  开发环境
+  "dev": "webpack-dev-server --config webpack.dev.js",
+  // "build": "webpack --mode development" 生产环境
+  "build": "webpack --config webpack.prod.js"
+}
+```
+然后遵循不重复原则(Don't repeat yourself - DRY)，创建一个 webpack.common.js 文件来报存两种环境下的通用配置。
+
+然后再安装使用`cnpm i webpack-merge -D`将这些配置合并在一起。此工具会引用 "common" 配置，因此我们不必再在环境特定的配置中编写重复代码。
+
+```javascript
+// webpack.prod.js
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const merge = require('webpack-merge')
+const commonConfig = require('./webpack.common.js')
+const prodConfig = {
+    mode: 'production',
+    plugins:[
+        new HtmlWebpackPlugin({
+            template: './src/index.html'
+        }),
+    ]
+}
+module.exports = merge(commonConfig, prodConfig)
+```
+
+也可以将这些新加的配置文件统一放入一个 build 文件夹内，但同时要注意修改各个配置文件及 package.json 里 script 字段的文件路径。
 
 ## Code Splitting
 

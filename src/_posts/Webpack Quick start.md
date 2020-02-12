@@ -80,7 +80,7 @@ loader 被用于转换某些类型的模块，而插件则可以用于执行范�
 
 **[模式(mode)](https://link.juejin.im/?target=https%3A%2F%2Fwww.webpackjs.com%2Fconcepts%2Fmode%2F)**
 
-通过选择 `development` 开发环境或 `production` 生产环境之中的一个，来设置 mode 参数，从而启用相应模式下的 webpack 内置的优化。
+通过设置`mode`参数来选择 development(开发环境) 或 production(生产环境) 生产环境之中的一个，从而启用相应模式下的 webpack 内置的优化。
 
 > 简单来说，开发时可能需要打印 debug 信息，还有定义 `sourcemap` 、`UglifyJSPlugin`文件，而生产环境是用于线上的即代码都是压缩后，运行时不打印 debug 信息等。譬如 axios、antd 等我们的生产环境中需要使用到那么我们应该安装该依赖在生产环境中，而 `webpack-dev-server` 则是需要安装在开发环境中。
 

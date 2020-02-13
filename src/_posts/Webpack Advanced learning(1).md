@@ -98,13 +98,13 @@ devtool: 'source-map', // 默认为 none
 - 生成环境 production: `none` 或 `cheap-module-source-map`
 - 或者使用 [SourceMapDevToolPlugin](https://webpack.docschina.org/plugins/source-map-dev-tool-plugin) 进行更细粒度的配置。(*切勿和 devtool 选项同时使用* )
 
-## Hot Module Replace 热模块更新
+## 模块热更新 Hot Module Replace
 
 在我们使用 webpack-dev-server 实现代码的热加载之后，每次源代码有改动，这个本地服务器就会自动帮我们打包并刷新浏览器。这确实很方便，但其实有时候我们其实却并不希望它去刷新页面。
 
 > 比如，我们在页面上通过很多的点击交互操作，最终在页面显示出一个特定列表。然后为了修改列表项样式，我们对源代码做了更改。如果此时 webpack-dev-server 帮我们自动刷新浏览器页面了，那我们就需要再重新进行一遍点击操作才能看到更改样式后的列表… 😟
 
-此时我们就可以使用 webpack-dev-server 的热模块更新功能 (HMR)。
+此时我们就可以使用 webpack-dev-server 的模块热更新功能 (HMR)。
 
 1. 修改 devServer 配置项
 
@@ -216,5 +216,29 @@ module.exports = merge(commonConfig, prodConfig)
 
 也可以将这些新加的配置文件统一放入一个 build 文件夹内，但同时要注意修改各个配置文件及 package.json 里 script 字段的文件路径。
 
-## Code Splitting
+## 代码分离 Code Splitting
+
+webpack 默认会根据配置将我们项目的代码都打包到 output 的文件中，但其实我们的项目代码不全是业务代码，肯定会引用一些第三方类库或者像 lodash 这样的工具函数库。如果都各种代码全都打包到一个 JS 文件输出，不仅页面加载这个文件时不仅会很慢，而且一旦业务代码有任何改动，下次访问就需要重新获取。
+
+所以我们需要将代码进行分离，然后将不同的代码打包到多个文件输出，这样下次访问时因为浏览器的缓存机制，没有变动的代码文件便不用去重新获取。
+
+> 代码分离是 webpack 中最引人注目的特性之一。此特性能够把代码分离到不同的 bundle 中，然后可以按需加载或并行加载这些文件。代码分离可以用于获取更小的 bundle，以及控制资源加载优先级，如果使用合理，会极大影响加载时间。
+
+- 代码分离最简单的方法就是通过手动配置 webpack 的**入口起点**来实现。
+
+```javascript
+// 在src下新建一个 lodash.js 并将 lodash 挂载到全局
+import _ from 'lodash';
+window._ = _;
+
+// 配置入口起点
+entry: {
+    index: './src/index.js',
+    lodash: './src/lodash.js' // 打包 lodash.js
+}
+```
+
+然后重新运行打包命令，会发现 dist 下多出一个单独打包 lodash 工具函数库代码的 lodash.js。
+
+
 

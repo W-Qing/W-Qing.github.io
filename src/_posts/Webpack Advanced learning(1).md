@@ -269,7 +269,37 @@ optimization: {
 - [`bundle-loader`](https://webpack.docschina.org/loaders/bundle-loader)：用于分离代码和延迟加载生成的 bundle。
 - [`promise-loader`](https://github.com/gaearon/promise-loader)：类似于 `bundle-loader` ，但是使用了 promise API。
 
+### 动态引入
 
+当涉及到对动态引入的代码进行拆分时，webpack 推荐选择的方案是：使用符合 [ECMAScript 提案](https://github.com/tc39/proposal-dynamic-import) 的 [`import()` 语法](https://webpack.docschina.org/api/module-methods#import-) 来实现动态导入。👉🏻[dynamic imports](https://webpack.docschina.org/guides/code-splitting/#动态导入-dynamic-imports-)
 
+```javascript
+// 动态引入 lodash 的 demo 
+function getComponent() {
+  // Lodash, now imported by this script
+	return import('lodash').then(({ default: _ }) => {
+		var element = document.createElement('div');
+		element.innerHTML = _.join(['Hello', 'webpack'], '🎉');
+		return element;
+	}).catch(
+    error => 'An error occurred while loading the component');
+}
 
+getComponent().then(component => {
+	document.body.appendChild(component);
+})
+```
+
+由于 `import()` 会返回一个 promise，因此它可以和`async`一起使用。但是，需要使用像 Babel 这样的预处理器和 [Syntax Dynamic Import Babel Plugin](https://babel.docschina.org/docs/en/babel-plugin-syntax-dynamic-import/#installation)。
+
+```javascript
+async function getComponent() {
+  var element = document.createElement('div');
+  
+  // Notice the default
+  const { default: _ } = await import('lodash');
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+  return element;
+}
+```
 

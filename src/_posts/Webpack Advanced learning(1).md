@@ -224,10 +224,12 @@ webpack 默认会根据配置将我们项目的代码都打包到 output 的文�
 
 > 代码分离是 webpack 中最引人注目的特性之一。此特性能够把代码分离到不同的 bundle 中，然后可以按需加载或并行加载这些文件。代码分离可以用于获取更小的 bundle，以及控制资源加载优先级，如果使用合理，会极大影响加载时间。
 
-- 代码分离最简单的方法就是通过手动配置 webpack 的**入口起点**来实现。
+### 入口起点
+
+代码分离最简单的方法就是通过手动配置 webpack 的入口起点来实现。
 
 ```javascript
-// 在src下新建一个 lodash.js 并将 lodash 挂载到全局
+// 在 src 下新建一个 lodash.js 并将 lodash 挂载到全局
 import _ from 'lodash';
 window._ = _;
 
@@ -238,7 +240,36 @@ entry: {
 }
 ```
 
-然后重新运行打包命令，会发现 dist 下多出一个单独打包 lodash 工具函数库代码的 lodash.js。
+然后重新运行打包命令，会发现 dist 下多出一个单独打包 lodash 工具函数库代码的 lodash.js，且打包后的 index.html 里也能自动引入。
+
+但这种方式存在一些隐患：
+
+- 如果入口 chunk 之间包含一些重复的模块，那些重复模块都会被引入到各个 bundle 中。
+- 这种方法不够灵活，并且不能动态地将核心应用程序逻辑中的代码拆分出来。
+
+这两点中的第一点，对我们的示例来说毫无疑问是个严重问题，因为我们如果在 `./src/index.js` 中也引入 `lodash`，这样就造成在两个 bundle 中重复引用。我们可以通过使用 [`SplitChunksPlugin`](https://webpack.docschina.org/plugins/split-chunks-plugin/) 插件来移除重复模块。
+
+### 去除重复
+
+其实，本质上 Code Splitting 只是一个分割代码的概念，与 webpack 没有直接关系。但之所以说它是 webpack 的特性是因为 webpack4 里面直接捆绑了`SplitChunks`这样的插件，我们不用再手动配置或是安装其他插件就可以很方便的实现代码分割。
+
+```javascript
+optimization: {
+	splitChunks: {
+    chunks: 'all'
+  }
+}
+```
+
+该插件可以将公共的依赖模块提取到已有的 entry chunk 中，或者提取到一个新生成的 chunk。比如通过设置配置文件的`optimization.splitChunks`选项，此插件将 `lodash` 这个沉重负担从主 bundle 中移除，然后分离到一个单独的 chunk 中，同时将项目中重复的依赖项删除掉。
+
+另外一些由社区提供，对于代码分离很有帮助的 plugin 和 loader：
+
+- [`mini-css-extract-plugin`](https://webpack.docschina.org/plugins/mini-css-extract-plugin)：用于将 CSS 从主应用程序中分离。
+- [`bundle-loader`](https://webpack.docschina.org/loaders/bundle-loader)：用于分离代码和延迟加载生成的 bundle。
+- [`promise-loader`](https://github.com/gaearon/promise-loader)：类似于 `bundle-loader` ，但是使用了 promise API。
+
+
 
 
 

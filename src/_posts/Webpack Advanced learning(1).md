@@ -297,9 +297,61 @@ async function getComponent() {
   var element = document.createElement('div');
   
   // Notice the default
-  const { default: _ } = await import('lodash');
+  const { default: _ } = await import(/* webpackChunkName: "lodash" */ 'lodash');
   element.innerHTML = _.join(['Hello', 'webpack'], ' ');
   return element;
 }
 ```
 
+> `/*webpackChunkName: "lodash"*/` ：import() 语法的魔法注释，为动态引入的模板设置打包后的文件名。
+
+## SplitChunksPlugin 详细配置
+
+上面👆我们通过设置 SplitChunksPlugin 的`splitChunks.chunks`配置就实现了去除重复依赖项以及同步与异步动态引入代码的打包分离。
+
+这是该插件的默认配置：
+
+```javascript
+optimization: {
+	splitChunks: {
+  	chunks: 'async',
+    minSize: 30000,
+    maxSize: 0,
+    minChunks: 1,
+    maxAsyncRequests: 5,
+    maxInitialRequests: 3,
+    automaticNameDelimiter: '~',
+    name: true,
+    cacheGroups: {
+    	vendors: {
+      	test: /[\\/]node_modules[\\/]/,
+        priority: -10,
+        filename: 'vendors.js'
+      },
+      default: {
+      	minChunks: 2,
+        priority: -20,
+        reuseExistingChunk: true
+      }
+    }
+  }
+}
+```
+
+**chunks：** async 只对异步引入的模块进行打包分离，initial 同步，all 两者都可。
+
+**minSize/maxSize：** 模块的文件大小范围。
+
+**minChunks：** 打包生成的 chunks 至少有几个引用了该模块，符合条件的模块才会被分离。
+
+**maxAsyncRequests：** 同时加载的模块数，后续超出部分的模块不会被分离。
+
+**maxInitialRequests：** 入口文件引用模块代码分离的上限数。
+
+**automaticNameDelimiter：** 生成的文件名默认连接符。
+
+**name：** 使下面设置的 filename 生效，从而可以为生成的文件重命名。
+
+**cacheGroups：** 缓存组 打包同步引入的代码时必须配合这个配置项一起使用才能生效，它决定分离出来的代码到底要放到哪个文件里面。vendors 为默认的分组名，test 为模块来源，priority 当前组的优先级，先放入优先级高的分组下的文件里。reuseExistingChunk 忽略已打包过的模块，直接复用。
+
+想要更好的控制代码分离的流程，请查阅[SplitChunksPlugin](https://webpack.docschina.org/plugins/split-chunks-plugin/)。

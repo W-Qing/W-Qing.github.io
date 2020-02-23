@@ -194,7 +194,7 @@ plugins:[
   "build": "webpack --config webpack.prod.js"
 }
 ```
-然后遵循不重复原则(Don't repeat yourself - DRY)，创建一个 webpack.common.js 文件来报存两种环境下的通用配置。
+然后遵循不重复原则 (Don't repeat yourself - DRY)，创建一个 webpack.common.js 文件来报存两种环境下的通用配置。
 
 然后再安装使用`cnpm i webpack-merge -D`将这些配置合并在一起。此工具会引用 "common" 配置，因此我们不必再在环境特定的配置中编写重复代码。
 
@@ -369,7 +369,7 @@ optimization: {
 
 **cacheGroups：** 缓存组 打包同步引入的代码时必须配合这个配置项一起使用才能生效，它决定分离出来的代码到底要放到哪个文件里面。vendors 为默认的分组名，test 为模块来源，priority 当前组的优先级，先放入优先级高的分组下的文件里。reuseExistingChunk 忽略已打包过的模块，直接复用。
 
-想要更好的控制代码分离的流程，请查阅[SplitChunksPlugin](https://webpack.docschina.org/plugins/split-chunks-plugin/)。
+想要更好的控制代码分离的流程，请查阅 [SplitChunksPlugin](https://webpack.docschina.org/plugins/split-chunks-plugin/)。
 
 ## Prefetch 和 Preload
 
@@ -410,7 +410,7 @@ document.addEventListener('click', () => {
 
 由此可见，webpack 认为只有这种异步的组件才能真正的提升网页的打包性能。而同步的代码模块只能增加一个缓存，而对性能的提升是有限的。即我们**在做前端代码性能优化的时候，最重要的点其实不是缓存，而是 Code Coverage 代码覆盖率。即缓存带来的代码性能提升是非常有限的，而应该通过提高页面核心代码的覆盖和利用率，从而提升代码性能与页面加载速度。**
 
-一些网站的登录模态框功能就是使用这种方式去实现的，但是如果我们只在点击后才去加载登录相关的代码，加载速度有可能会比较慢，影响用户体验。那么此时就需要用到 webpack [预取 prefetching 和预加载 preloading 模块](https://webpack.docschina.org/guides/code-splitting/#预取-预加载模块-prefetch-preload-module-))的功能。从而既能提高首页核心代码的加载速度，同时也可以在页面展示完成后将登陆功能的代码加载进来，保证用户点击登录后的快速响应。
+一些网站的登录模态框功能就是使用这种方式去实现的，但是如果我们只在点击后才去加载登录相关的代码，加载速度有可能会比较慢，影响用户体验。那么此时就需要用到 webpack [预取 prefetching 和预加载 preloading 模块](https://webpack.docschina.org/guides/code-splitting/#预取-预加载模块-prefetch-preload-module-)) 的功能。从而既能提高首页核心代码的加载速度，同时也可以在页面展示完成后将登陆功能的代码加载进来，保证用户点击登录后的快速响应。
 
 ```js
 import(/* webpackPrefetch: true */ './click.js').then(({default: func}) => {
@@ -428,7 +428,7 @@ import(/* webpackPrefetch: true */ './click.js').then(({default: func}) => {
 
 当我们使用 webpack 对各种模块代码进行了分离打包之后，理所应当应该利用一些打包分析的工具来对输出的结果进行检查，分析是否合理。
 
-使用[webpack 官方打包分析工具](https://github.com/webpack/analyse)生成一个打包分析的说明文件 stats.json，然后可以上传到[这里](http://webpack.github.com/analyse)上查看结果。
+使用 [webpack 官方打包分析工具](https://github.com/webpack/analyse) 生成一个打包分析的说明文件 stats.json，然后可以上传到 [这里](http://webpack.github.com/analyse) 上查看结果。
 
 ```js
 // package.json
@@ -447,3 +447,44 @@ import(/* webpackPrefetch: true */ './click.js').then(({default: func}) => {
 - [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)：一个 plugin 和 CLI 工具，它将 bundle 内容展示为便捷的、交互式、可缩放的树状图形式。
 - [webpack bundle optimize helper](https://webpack.jakoblind.no/optimize)：此工具会分析你的 bundle，并为你提供可操作的改进措施建议，以减少 bundle 体积大小。
 
+## CSS 代码分离
+
+上面我们已经实现了对项目引用的一些 JS 代码进行分离打包，但是 CSS 代码依然还是被打包进了 JS 文件里 (css-in-js) 。
+
+要想对 CSS 文件也进行分离打包，可以使用 [MiniCssExtractPlugin](https://webpack.docschina.org/plugins/mini-css-extract-plugin/) 。
+
+但目前这个插件还不支持 HMR，所以我们只是在线上环境使用。
+
+使用`yarn add mini-css-extract-plugin -D`完成安装后，配置 webpack 线上环境的文件。
+
+```js
+// webpack.prod.js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // 可选参数
+      filename: "[name].css",
+      chunkFilename: "[name].chunk.css"
+    })
+  ],
+  module: {
+    rules: [
+    	{
+      	test: /\.(css|scss)$/,
+        use: [
+          // 与开发环境使用 style-loader 不同，这里要使用 MiniCssExtractPlugin 的 loader
+        	MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
+      }
+    ]
+  }
+}
+```
+
+如果想对打包后的 css 文件代码进压缩可以使用官方推荐的 [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin)(Webpack5 已内置）
+
+其他关于多入口的时候打包对应 CSS 的需求，配置相关的`optimization.splitChunks.cacheGroups`即可实现。

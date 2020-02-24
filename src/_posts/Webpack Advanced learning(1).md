@@ -488,3 +488,33 @@ module.exports = {
 如果想对打包后的 css 文件代码进压缩可以使用官方推荐的 [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin)(Webpack5 已内置）
 
 其他关于多入口的时候打包对应 CSS 的需求，配置相关的`optimization.splitChunks.cacheGroups`即可实现。
+
+## Caching 缓存
+
+目前我们每次打包后生成的文件都是按以下格式来配置的：
+
+```js
+output:{
+	// 使用占位符来命名即项目直接引用的 app.js
+	filename:"[name].js",
+	// 代码在 node-modules 下的模块打包生成的 chunks 会按照这个格式命名
+ 	chunkFilename: "[name].chunk.js"
+}
+```
+
+这样有一个问题，就是如果我们更改了源代码，将重新打包生成的文件放到服务器之后。在浏览器端去请求时，会因为本地有缓存的同名文件，而不会去使用最新上传服务器的文件，导致最新代码无法生效。
+
+开发环境下我们不需要关心缓存的问题，因为 HMR 会为我们解决这个问题，所以我们只需要使用`[contenthash]`占位符修改一下生成环境的打包配置。
+
+```js
+output:{
+	filename:"[name].[contenthash].js", 
+	// app.6df1cf350155facd60f5.js
+	chunkFilename: "[name].[contenthash].js"
+	// lodash.96223b700cd12e8a3a4d.js
+}
+```
+
+使用一串哈希值为文件内容添加上一个标识，这样只要我们的源代码不发生改变，打包后的文件名就不会变。相应的，如果源代码发生变动，文件名的hash值也会发生改变。从而解决本地缓存的问题。
+
+> 一些因为旧版本的boilerplate(引导模板)，特别是 runtime 和 manifest引起的，不改动源代码，文件名却发生变化的问题，查看官网具体[最佳方案](https://webpack.docschina.org/guides/caching/#提取引导模板-extracting-boilerplate-)解决。

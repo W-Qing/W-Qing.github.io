@@ -515,6 +515,12 @@ output:{
 }
 ```
 
-使用一串哈希值为文件内容添加上一个标识，这样只要我们的源代码不发生改变，打包后的文件名就不会变。相应的，如果源代码发生变动，文件名的hash值也会发生改变。从而解决本地缓存的问题。
+使用一串哈希值为文件内容添加上一个标识，这样只要我们的源代码不发生改变，打包后的文件名就不会变。相应的，如果源代码发生变动，文件名的 hash 值也会发生改变。从而解决本地缓存的问题。
 
-> 一些因为旧版本的boilerplate(引导模板)，特别是 runtime 和 manifest引起的，不改动源代码，文件名却发生变化的问题，查看官网具体[最佳方案](https://webpack.docschina.org/guides/caching/#提取引导模板-extracting-boilerplate-)解决。
+> 一些因为旧版本的 boilerplate（引导模板），特别是 runtime 和 manifest 引起的，不改动源代码，文件名却发生变化的问题，查看官网具体 [最佳方案](https://webpack.docschina.org/guides/caching/#提取引导模板-extracting-boilerplate-) 解决。
+
+## Shim 预置依赖
+
+在 webpack 打包过程中，当我们要利用 polyfill 来做代码方面的兼容扩展浏览器能力，或者是处理打包过程的兼容时，可以使用 Shim 预置依赖的功能。
+
+常见的一些方案与工具查看官方 [shim 预置依赖](https://webpack.docschina.org/guides/shimming/#shim-预置全局变量)文档。
